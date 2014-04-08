@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+require 'thor'
+require 'thor/group'
+require 'erubis'
+require 'fileutils'
+
+module Cli
+  class Dumbo < Thor
+
+    desc "new name", "creates a new extension skeleton"
+
+    def new(name, initial_version='0.0.1')
+      FileUtils.mkdir_p("#{name}/sql")
+      FileUtils.mkdir_p("#{name}/src")
+      FileUtils.mkdir_p("#{name}/spec/support")
+      FileUtils.mkdir_p("#{name}/config")
+      FileUtils.mkdir_p("#{name}/lib/tasks")
+
+      spec_helper = Dir.glob(File.expand_path('../../spec/spec_helper.rb', __FILE__))
+      spec_helper += Dir.glob(File.expand_path('../../spec/support', __FILE__))
+
+      FileUtils.cp_r spec_helper, "#{name}/spec/"
+
+      FileUtils.cp File.expand_path('../../config/boot.rb', __FILE__), "#{name}/config/"
+
+      template_path = File.expand_path('../../template', __FILE__)
+
+      Dir.glob(File.expand_path('../../template/**/*', __FILE__)).each do |template|
+        pathname = Pathname.new(template)
+        dest_name = pathname.relative_path_from Pathname.new(template_path)
+
+        if pathname.directory?
+          FileUtils.mkdir_p("#{name}/#{dest_name}")
+          next
+        end
+
+        if dest_name.extname =='.erb'
+          eruby = Erubis::Eruby.new(File.read(template))
+          File.open("#{name}/#{dest_name.sub_ext('')}",'w') do |f|
+            f.puts eruby.result({ext_name: name})
+          end
+        else
+          FileUtils.cp template, "#{name}/#{dest_name}"
+        end
+      end
+
+      File.open("#{name}/#{name}.control",'w') do |f|
+        f.puts "# #{name} extension"
+        f.puts "comment = 'my awesome extension'"
+        f.puts "default_version = '#{initial_version}'"
+        f.puts "relocatable = true"
+        f.puts "requires = ''"
+      end
+    end
+  end
+end
+
+Cli::Dumbo.start(ARGV)

@@ -1,0 +1,5 @@
+# dumbo_sample extension
+comment = 'my awesome extension'
+default_version = '0.0.2'
+relocatable = true
+requires = ''
