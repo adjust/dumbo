@@ -17,7 +17,7 @@ module Dumbo
     end
 
     def drop
-      "DROP FUNCTION #{name} #{arg_types}"
+      "DROP FUNCTION #{name}(#{arg_types});"
     end
 
     def upgrade(other)

@@ -31,7 +31,7 @@ module Dumbo
     end
 
     def drop
-      "DROP CAST (#{source_type} AS #{target_type})"
+      "DROP CAST (#{source_type} AS #{target_type});"
     end
 
     def to_sql
