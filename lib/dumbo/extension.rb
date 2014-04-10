@@ -1,19 +1,36 @@
 module Dumbo
-  class Extension
-    attr_reader :name, :version
-    def initialize(name = nil, version = nil)
-      @name = name || File.read('Makefile')[/EXTENSION *= *([^\s]*)/,1]
-      @version = version || File.read("#{self.name}.control")[/default_version *= *'([^']*)'/,1]
+  class Extension < Struct.new(:name, :version)
+    class << self
+      def name
+        @_name ||= File.read('Makefile')[/EXTENSION\s*=\s*([^\s]*)/, 1]
+      end
+
+      def version
+        @_version ||= File.read("#{name}.control")[/default_version\s*=\s*'([^']*)'/, 1]
+      end
+    end
+
+    def name
+      self[:name] ||= Extension.name
+    end
+
+    def version
+      self[:version] ||= Extension.version
     end
 
     # main releases without migrations
     def releases
-      Dir.glob("#{name}--*.sql").reject{|f| f=~/\d--\d/}
+      Dir.glob("#{name}--*.sql").reject{ |f| f =~ /\d--\d/ }
     end
 
     def available_versions
-      versions = releases.map{|f| ExtensionVersion.new f[/#{name}--([\d\.]*?)\.sql/,1] }
-      versions.sort
+      releases.map do |file_name|
+        if version_string = file_name[/([\d+\.]+)\.sql$/, 1]
+          ExtensionVersion.new(version_string)
+        else
+          nil
+        end
+      end.compact.sort
     end
 
     def install
@@ -24,12 +41,12 @@ module Dumbo
 
     def obj_id
       @obj_id ||= begin
-        result = execute <<-sql
+        result = execute <<-SQL
           SELECT e.extname, e.oid
           FROM pg_catalog.pg_extension e
           WHERE e.extname ~ '^(#{name})$'
           ORDER BY 1;
-        sql
+        SQL
         result.first['oid']
       end
     end
@@ -68,6 +85,5 @@ module Dumbo
     def execute(sql)
       ActiveRecord::Base.connection.execute sql
     end
-
   end
 end

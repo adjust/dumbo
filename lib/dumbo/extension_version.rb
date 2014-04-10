@@ -19,7 +19,7 @@ module Dumbo
     end
 
     def to_s
-      [major,minor,patch].join('.')
+      [major,minor,patch].compact.join('.')
     end
   end
 end
