@@ -18,11 +18,12 @@ RSpec.configure do |config|
 
   # wrap test in transactions
   config.around(:each) do |example|
-     ActiveRecord::Base.transaction do
+    ActiveRecord::Base.transaction do
       example.run
       raise ActiveRecord::Rollback
-     end
+    end
   end
 
   config.include(SqlHelper)
+  config.include(ExtensionHelper)
 end

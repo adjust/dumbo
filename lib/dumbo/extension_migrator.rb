@@ -5,9 +5,9 @@ module Dumbo
 
     def initialize(name, old_version, new_version)
       @name = name
-      @old_version = Extension.new(name, old_version).install
+      @old_version = Extension.new(name, old_version).create
       @old_version.objects
-      @new_version = Extension.new(name, new_version).install
+      @new_version = Extension.new(name, new_version).create
       @new_version.objects
     end
 

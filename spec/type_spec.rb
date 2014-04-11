@@ -1,64 +1,76 @@
 require 'spec_helper'
+
 describe Dumbo::Type do
+  around(:each) do |example|
+    install_testing_extension
+    extension.create
+    example.run
+    uninstall_testing_extension
+  end
+
+  let(:version) { '0.0.3' }
+
+  let(:extension) { Dumbo::Extension.new('dumbo_sample', version) }
+
+  let(:type) do
+    oid = sql("SELECT oid FROM pg_type WHERE typname = '#{type_name}'", 'oid').first
+    Dumbo::Type.new(oid).get
+  end
+
+  shared_examples_for 'identifiable' do
+    subject { type.identify }
+
+    it { should eq [ type_name ] }
+  end
+
   describe 'Base Type' do
-    let(:type) do
-      extension = Dumbo::Extension.new('hstore','1.1')
-      extension.install
-      extension.types.select{|t| t.name =='hstore'}.first
-    end
+    let(:version) { '0.0.4' }
+
+    let(:type_name) { 'elephant_base' }
+
+    let(:type) { extension.types.select { |t| t.name == type_name }.first }
+
     it "should have a sql representation" do
       type.to_sql.should eq <<-SQL.gsub(/^ {6}/, '')
-      CREATE TYPE hstore(
-        INPUT=hstore_in,
-        OUTPUT=hstore_out,
-        RECEIVE=hstore_recv,
-        SEND=hstore_send,
+      CREATE TYPE elephant_base(
+        INPUT=elephant_in,
+        OUTPUT=elephant_out,
+        RECEIVE=-,
+        SEND=-,
         ANALYZE=-,
         CATEGORY='U',
         DEFAULT='',
         INTERNALLENGTH=-1,
         ALIGNMENT=int,
-        STORAGE=EXTENDED
+        STORAGE=PLAIN
       );
       SQL
     end
 
-    it 'should have a uniq identfier' do
-      type.identify.should eq ['hstore']
-    end
+    it_should_behave_like 'identifiable'
   end
 
   describe 'Composite Type' do
-    let(:type) do
-      sql "CREATE TYPE compfoo AS (f1 int, f2 text);"
-      oid = sql("SELECT oid FROM pg_type where typname = 'compfoo'",'oid').first
-      Dumbo::Type.new(oid).get
-    end
+    let(:type_name) { 'elephant_composite' }
 
     it "should have a sql representation" do
       type.to_sql.should eq <<-SQL.gsub(/^ {6}/, '')
-      CREATE TYPE compfoo AS (
-        f1 integer,
-        f2 text
+      CREATE TYPE elephant_composite AS (
+        weight integer,
+        name text
       );
       SQL
     end
 
-    it 'should have a uniq identfier' do
-      type.identify.should eq ['compfoo']
-    end
+    it_should_behave_like 'identifiable'
   end
 
   describe 'Range Type' do
-    let(:type) do
-      sql "CREATE TYPE float8_range AS RANGE (subtype = float8, subtype_diff = float8mi);"
-      oid = sql("SELECT oid FROM pg_type where typname = 'float8_range'",'oid').first
-      Dumbo::Type.new(oid).get
-    end
+    let(:type_name) { 'elephant_range' }
 
     it "should have a sql representation" do
       type.to_sql.should eq <<-SQL.gsub(/^ {6}/, '')
-      CREATE TYPE float8_range AS RANGE (
+      CREATE TYPE elephant_range AS RANGE (
         SUBTYPE=float8,
         SUBTYPE_OPCLASS=float8_ops,
         SUBTYPE_DIFF=float8mi
@@ -66,30 +78,22 @@ describe Dumbo::Type do
       SQL
     end
 
-    it 'should have a uniq identfier' do
-      type.identify.should eq ['float8_range']
-    end
+    it_should_behave_like 'identifiable'
   end
 
   describe 'Enum Type' do
-    let(:type) do
-      sql "CREATE TYPE bug_status AS ENUM ('new', 'open', 'closed');"
-      oid = sql("SELECT oid FROM pg_type where typname = 'bug_status'",'oid').first
-      Dumbo::Type.new(oid).get
-    end
+    let(:type_name) { 'elephant_enum' }
 
     it "should have a sql representation" do
       type.to_sql.should eq <<-SQL.gsub(/^ {6}/, '')
-      CREATE TYPE bug_status AS ENUM (
-        'new',
-        'open',
-        'closed'
+      CREATE TYPE elephant_enum AS ENUM (
+        'infant',
+        'child',
+        'adult'
       );
       SQL
     end
 
-    it 'should have a uniq identfier' do
-      type.identify.should eq ['bug_status']
-    end
+    it_should_behave_like 'identifiable'
   end
 end

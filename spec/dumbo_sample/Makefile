@@ -2,5 +2,9 @@
 EXTENSION = dumbo_sample
 PG_CONFIG ?= pg_config
 DATA = $(wildcard *--*.sql)
+
+MODULE_big = dumbo_sample
+OBJS = src/dumbo_sample.o
+
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)

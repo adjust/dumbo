@@ -2,11 +2,35 @@ module Dumbo
   class Extension < Struct.new(:name, :version)
     class << self
       def name
-        @_name ||= File.read('Makefile')[/EXTENSION\s*=\s*([^\s]*)/, 1]
+        @_name ||= File.read(makefile)[/EXTENSION\s*=\s*([^\s]*)/, 1]
       end
 
       def version
-        @_version ||= File.read("#{name}.control")[/default_version\s*=\s*'([^']*)'/, 1]
+        @_version ||= File.read(control_file)[/default_version\s*=\s*'([^']*)'/, 1]
+      end
+
+      def versions
+        new.versions
+      end
+
+      def version!(string)
+        content = File.read(control_file)
+        new_content = content.gsub(version, new_version)
+        File.open(control_file, "w") { |file| file.puts new_content }
+      end
+
+      def file_name
+        "#{name}--#{version}.sql"
+      end
+
+      private
+
+      def makefile
+        'Makefile'
+      end
+
+      def control_file
+        "#{name}.control"
       end
     end
 
@@ -23,19 +47,23 @@ module Dumbo
       Dir.glob("#{name}--*.sql").reject{ |f| f =~ /\d--\d/ }
     end
 
-    def available_versions
+    def versions
       releases.map do |file_name|
         if version_string = file_name[/([\d+\.]+)\.sql$/, 1]
-          ExtensionVersion.new(version_string)
+          ExtensionVersion.new_from_string(version_string)
         else
           nil
         end
       end.compact.sort
     end
 
-    def install
+    def create
       execute "DROP EXTENSION IF EXISTS #{name}"
-      execute "CREATE EXTENSION #{name} VERSION '#{version}'"
+
+      create_sql = "CREATE EXTENSION #{name}"
+      create_sql = "#{create_sql} VERSION '#{version}'" unless version.nil?
+
+      execute create_sql
       self
     end
 

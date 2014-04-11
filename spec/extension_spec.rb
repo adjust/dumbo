@@ -2,10 +2,13 @@ require 'spec_helper'
 
 describe Dumbo::Extension do
   describe 'extension setup' do
-    let(:extension) { Dumbo::Extension.new('hstore', '1.1') }
+    let(:extension) { described_class.new('dumbo_sample', '0.0.3') }
 
-    before(:all) do
-      Dumbo::Extension.new('hstore', '1.1').install
+    around(:each) do |example|
+      install_testing_extension
+      extension.create
+      example.run
+      uninstall_testing_extension
     end
 
     it "should return extension obj_id" do
@@ -13,15 +16,22 @@ describe Dumbo::Extension do
     end
 
     it 'should return a list of objects' do
-      extension.objects.size.should eq 86
+      extension.objects.should have(5).items
     end
 
-    it 'should return a list of types' do
-      extension.types.select{|t| t.name == 'hstore'}.should_not be_empty
+    describe 'handling types' do
+      let(:names) { [ 'elephant_composite', 'elephant_range', 'elephant_enum' ] }
+
+      let(:classes) { [ Dumbo::EnumType, Dumbo::CompositeType, Dumbo::RangeType ] }
+
+      subject { extension.types }
+
+      it { subject.map(&:class).should match_array classes }
+      it { subject.map(&:name).should match_array names }
     end
   end
 
-  describe '#available_versions' do
+  describe '#versions' do
     let(:releases) do
       [ 'ext--abc.sql', 'ext--0.10.7.sql', 'ext--0.11.0.sql',
         'ext--1.0.0.sql', 'ext--0.12.sql', 'ext--0.10.5.sql' ]
@@ -31,7 +41,7 @@ describe Dumbo::Extension do
       described_class.any_instance.stub(:releases).and_return(releases)
     end
 
-    subject { described_class.new('', '').available_versions.map(&:to_s) }
+    subject { described_class.new.versions.map(&:to_s) }
 
     it { should match_array [ '0.10.5', '0.10.7', '0.11.0', '0.12', '1.0.0' ] }
   end

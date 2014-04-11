@@ -17,7 +17,7 @@ module Dumbo
 
       namespace name do
         desc 'creates and installs extension'
-        task all: [:src, "#{extension}--#{version}.sql", :install]
+        task all: [:src, Extension.file_name, :install]
 
         desc 'installs the extension'
         task :install do
@@ -25,7 +25,7 @@ module Dumbo
         end
 
         desc 'concatenates files'
-        file "#{extension}--#{version}.sql" => file_list do |t|
+        file Extension.file_name => file_list do |t|
           sql = t.prerequisites.map do |file|
             ["--source file #{file}"] + get_sql(file) + [' ']
           end.flatten
@@ -45,60 +45,39 @@ module Dumbo
 
         desc 'creates migration files for the last two versions'
         task :migrations do
-          old_version, new_version = Dumbo::Extension.new.available_versions.last(2).map(&:to_s)
+          old_version, new_version = Extension.versions.last(2).map(&:to_s)
+
           if new_version
-            Dumbo::ExtensionMigrator.new(Dumbo::Extension.new.name, old_version, new_version).create
+            ExtensionMigrator.new(Extension.name, old_version, new_version)
+            .create
           end
         end
 
-        desc 'release a new version'
+        desc 'upgrate .control file to a new version'
         task :new_version, :level do |t, args|
           args.with_defaults(level: 'patch')
-          v = version_bump args[:level]
-          set_version v
+
+          v = new_version(args[:level])
+          Extension.version!(v)
 
           Rake::Task["#{name}:all"].invoke
         end
       end
     end
 
-    def set_version(new_version)
-      content = File.read("#{extension}.control")
-      new_content = content.gsub(version, new_version)
-      File.open("#{extension}.control", 'w') { |file| file.puts new_content }
+    def new_version(level = :patch)
+      ExtensionVersion.new_from_string(Extension.version).bump(level).to_s
     end
 
-    def version_bump(level = 'patch')
-      levels = { 'patch' => 2, 'minor' => 1, 'major' => 0 }
-      parts = version.split('.').map(&:to_i)
-      l = levels[level]
-      parts[l] += 1
-      (l + 1..2).each { |l| parts[l] = 0 }
-
-      parts.join('.')
-    end
-
-    def version
-      Dumbo::Extension.new.version
-    end
-
-    def extension
-      Dumbo::Extension.new.name
-    end
-
-    def available_versions
-      Dumbo::Extension.new.name.available_versions
-    end
-
-        # source sql file list
+    # source sql file list
     def file_list
-      Dumbo::DependencyResolver.new(Dir.glob('sql/**/*.{sql,erb}')).resolve
+      DependencyResolver.new(Dir.glob('sql/**/*.{sql,erb}')).resolve
     end
 
     def concatenate(lines, target)
       File.open(target, 'w') do |f|
         lines.each do |line|
-          f.puts line unless line =~ Dumbo::DependencyResolver.depends_pattern
+          f.puts line unless line =~ DependencyResolver.depends_pattern
         end
       end
     end
