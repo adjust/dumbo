@@ -4,7 +4,7 @@ module Dumbo
 
     class << self
       def new_from_string(version)
-        ExtensionVersion.new(*version.split(".").map(&:to_i))
+        ExtensionVersion.new(*version.split('.').map(&:to_i))
       end
 
       def sort
@@ -13,9 +13,9 @@ module Dumbo
     end
 
     def <=>(other)
-      return major <=> other.major if ((major <=> other.major) != 0)
-      return minor <=> other.minor if ((minor <=> other.minor) != 0)
-      return patch <=> other.patch if ((patch <=> other.patch) != 0)
+      return major <=> other.major if (major <=> other.major) != 0
+      return minor <=> other.minor if (minor <=> other.minor) != 0
+      return patch <=> other.patch if (patch <=> other.patch) != 0
     end
 
     def bump(level)

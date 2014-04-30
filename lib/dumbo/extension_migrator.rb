@@ -12,24 +12,24 @@ module Dumbo
     end
 
     def create
-      File.open("#{name}--#{old_version.version}--#{new_version.version}.sql",'w') do |f|
+      File.open("#{name}--#{old_version.version}--#{new_version.version}.sql", 'w') do |f|
         f.puts upgrade
       end
-      File.open("#{name}--#{new_version.version}--#{old_version.version}.sql",'w') do |f|
+      File.open("#{name}--#{new_version.version}--#{old_version.version}.sql", 'w') do |f|
         f.puts downgrade
       end
     end
 
     def upgrade
       TYPES.map do |type|
-        diff = object_diff(type,:upgrade)
+        diff = object_diff(type, :upgrade)
         "----#{type}----\n" + diff if diff.present?
       end.compact.join("\n")
     end
 
     def downgrade
       TYPES.map do |type|
-        diff = object_diff(type,:downgrade)
+        diff = object_diff(type, :downgrade)
         "----#{type}----\n" + diff if diff.present?
       end.compact.join("\n")
     end
@@ -46,12 +46,12 @@ module Dumbo
       ids = @old_version.public_send(type).map(&:identify) | @new_version.public_send(type).map(&:identify)
 
       sqls = ids.map do |id|
-        n = @new_version.public_send(type).find{|n| n.identify == id }
-        o = @old_version.public_send(type).find{|n| n.identify == id }
+        n = @new_version.public_send(type).find { |n| n.identify == id }
+        o = @old_version.public_send(type).find { |n| n.identify == id }
         if n
-          n.public_send(dir,o)
+          n.public_send(dir, o)
         elsif o
-          o.public_send(dir,o)
+          o.public_send(dir, o)
         end
       end
 

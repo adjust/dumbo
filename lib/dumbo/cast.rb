@@ -23,8 +23,8 @@ module Dumbo
       WHERE ca.oid = #{oid}
       SQL
 
-      result.first.each do |k,v|
-        send("#{k}=",v) rescue nil
+      result.first.each do |k, v|
+        send("#{k}=", v) rescue nil
       end
 
       result.first
@@ -37,7 +37,7 @@ module Dumbo
     def to_sql
       attributes = []
       attributes << "WITH FUNCTION #{function_name}(#{source_type})" if function_name
-      attributes << "WITHOUT FUNCTION" unless function_name
+      attributes << 'WITHOUT FUNCTION' unless function_name
       attributes << context if context
 
       <<-SQL.gsub(/^ {6}/, '')

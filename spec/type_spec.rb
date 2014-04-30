@@ -20,7 +20,7 @@ describe Dumbo::Type do
   shared_examples_for 'identifiable' do
     subject { type.identify }
 
-    it { should eq [ type_name ] }
+    it { should eq [type_name] }
   end
 
   describe 'Base Type' do
@@ -30,7 +30,7 @@ describe Dumbo::Type do
 
     let(:type) { extension.types.select { |t| t.name == type_name }.first }
 
-    it "should have a sql representation" do
+    it 'should have a sql representation' do
       type.to_sql.should eq <<-SQL.gsub(/^ {6}/, '')
       CREATE TYPE elephant_base(
         INPUT=elephant_in,
@@ -53,7 +53,7 @@ describe Dumbo::Type do
   describe 'Composite Type' do
     let(:type_name) { 'elephant_composite' }
 
-    it "should have a sql representation" do
+    it 'should have a sql representation' do
       type.to_sql.should eq <<-SQL.gsub(/^ {6}/, '')
       CREATE TYPE elephant_composite AS (
         weight integer,
@@ -68,7 +68,7 @@ describe Dumbo::Type do
   describe 'Range Type' do
     let(:type_name) { 'elephant_range' }
 
-    it "should have a sql representation" do
+    it 'should have a sql representation' do
       type.to_sql.should eq <<-SQL.gsub(/^ {6}/, '')
       CREATE TYPE elephant_range AS RANGE (
         SUBTYPE=float8,
@@ -84,7 +84,7 @@ describe Dumbo::Type do
   describe 'Enum Type' do
     let(:type_name) { 'elephant_enum' }
 
-    it "should have a sql representation" do
+    it 'should have a sql representation' do
       type.to_sql.should eq <<-SQL.gsub(/^ {6}/, '')
       CREATE TYPE elephant_enum AS ENUM (
         'infant',

@@ -16,7 +16,6 @@ module Dumbo
     identfied_by :name, :leftarg, :rightarg
 
     def load_attributes
-
       result = execute <<-SQL
         SELECT
          op.oprname AS name,
@@ -42,16 +41,15 @@ module Dumbo
         WHERE op.oid = #{oid}
       SQL
 
-      result.first.each do |k,v|
-        send("#{k}=",v) rescue nil
+      result.first.each do |k, v|
+        send("#{k}=", v) rescue nil
       end
 
       result.first
-
     end
 
     def to_sql
-      attrs = [:leftarg, :rightarg, :commutator, :negator, :restrict, :join].inject([]) do |mem, attr|
+      attrs = [:leftarg, :rightarg, :commutator, :negator, :restrict, :join].reduce([]) do |mem, attr|
         mem << "#{attr.to_s.upcase} = #{public_send(attr)}" if public_send(attr)
         mem
       end

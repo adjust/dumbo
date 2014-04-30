@@ -1,11 +1,11 @@
 require 'spec_helper'
 describe Dumbo::Operator do
   let(:operator) do
-    oid = sql("SELECT oid FROM pg_operator WHERE oprname = '&&' AND format_type(oprleft,NULL) = 'box' AND format_type(oprright,NULL) ='box'",'oid').first
+    oid = sql("SELECT oid FROM pg_operator WHERE oprname = '&&' AND format_type(oprleft,NULL) = 'box' AND format_type(oprright,NULL) ='box'", 'oid').first
     Dumbo::Operator.new(oid).get
   end
 
-  it "should have a sql representation" do
+  it 'should have a sql representation' do
     operator.to_sql.should eq <<-SQL.gsub(/^ {4}/, '')
     CREATE OPERATOR && (
       PROCEDURE = box_overlap,
@@ -36,7 +36,6 @@ describe Dumbo::Operator do
   end
 
   it 'should have downgrade sql' do
-    operator.downgrade(nil).should eq "DROP OPERATOR &&;"
+    operator.downgrade(nil).should eq 'DROP OPERATOR &&;'
   end
 end
-

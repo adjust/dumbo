@@ -11,7 +11,7 @@ describe Dumbo::Extension do
       uninstall_testing_extension
     end
 
-    it "should return extension obj_id" do
+    it 'should return extension obj_id' do
       extension.obj_id.should ~ /\d+/
     end
 
@@ -20,9 +20,9 @@ describe Dumbo::Extension do
     end
 
     describe 'handling types' do
-      let(:names) { [ 'elephant_composite', 'elephant_range', 'elephant_enum' ] }
+      let(:names) { %w(elephant_composite elephant_range elephant_enum) }
 
-      let(:classes) { [ Dumbo::EnumType, Dumbo::CompositeType, Dumbo::RangeType ] }
+      let(:classes) { [Dumbo::EnumType, Dumbo::CompositeType, Dumbo::RangeType] }
 
       subject { extension.types }
 
@@ -33,8 +33,8 @@ describe Dumbo::Extension do
 
   describe '#versions' do
     let(:releases) do
-      [ 'ext--abc.sql', 'ext--0.10.7.sql', 'ext--0.11.0.sql',
-        'ext--1.0.0.sql', 'ext--0.12.sql', 'ext--0.10.5.sql' ]
+      ['ext--abc.sql', 'ext--0.10.7.sql', 'ext--0.11.0.sql',
+       'ext--1.0.0.sql', 'ext--0.12.sql', 'ext--0.10.5.sql']
     end
 
     before do
@@ -43,6 +43,6 @@ describe Dumbo::Extension do
 
     subject { described_class.new.versions.map(&:to_s) }
 
-    it { should match_array [ '0.10.5', '0.10.7', '0.11.0', '0.12', '1.0.0' ] }
+    it { should match_array ['0.10.5', '0.10.7', '0.11.0', '0.12', '1.0.0'] }
   end
 end

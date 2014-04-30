@@ -21,36 +21,36 @@ module Dumbo
     end
 
     def upgrade(other)
-      return self.to_sql if other.nil?
+      return to_sql if other.nil?
 
-      if other.identify != self.identify
-        raise "Not the Same Objects!"
+      if other.identify != identify
+        fail 'Not the Same Objects!'
       end
 
-      return nil if other.to_sql == self.to_sql
+      return nil if other.to_sql == to_sql
 
-      if other.result_type != self.result_type
-         <<-SQL.gsub(/^ {8}/, '')
-        #{self.drop}
-        #{self.to_sql}
+      if other.result_type != result_type
+        <<-SQL.gsub(/^ {8}/, '')
+        #{drop}
+        #{to_sql}
         SQL
       else
-        self.to_sql
+        to_sql
       end
     end
 
     def downgrade(other)
-      return self.to_sql if other.nil?
+      return to_sql if other.nil?
 
-      if other.identify != self.identify
-        raise "Not the Same Objects!"
+      if other.identify != identify
+        fail 'Not the Same Objects!'
       end
 
-      return nil if other.to_sql == self.to_sql
+      return nil if other.to_sql == to_sql
 
-      if other.result_type != self.result_type
-         <<-SQL.gsub(/^ {8}/, '')
-        #{self.drop}
+      if other.result_type != result_type
+        <<-SQL.gsub(/^ {8}/, '')
+        #{drop}
         #{other.to_sql}
         SQL
       else
@@ -87,15 +87,15 @@ module Dumbo
           AND p.oid = #{oid};
       SQL
 
-      result.first.each do |k,v|
-        send("#{k}=",v) rescue nil
+      result.first.each do |k, v|
+        send("#{k}=", v) rescue nil
       end
 
       result.first
     end
 
     def to_sql
-      definition.gsub("public.#{name}",name)
+      definition.gsub("public.#{name}", name)
     end
   end
 end

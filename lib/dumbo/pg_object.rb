@@ -17,10 +17,10 @@ module Dumbo
     end
 
     def identify
-       identifier.map{|a| public_send a}
+      identifier.map { |a| public_send a }
     end
 
-    def get(type=nil)
+    def get(type = nil)
       case type
       when 'function', 'pg_proc'
         Function.new(oid).get
@@ -31,42 +31,39 @@ module Dumbo
       when 'type', 'pg_type'
         Type.new(oid).get
       else
-        self.load_attributes
+        load_attributes
         self
       end
     end
 
     def load_attributes
-
     end
 
     def upgrade(other)
-      return self.to_sql if other.nil?
+      return to_sql if other.nil?
 
-      if other.identify != self.identify
-        raise "Not the Same Objects!"
+      if other.identify != identify
+        fail 'Not the Same Objects!'
       end
 
-      if other.to_sql != self.to_sql
-         <<-SQL.gsub(/^ {8}/, '')
-        #{self.drop}
-        #{self.to_sql}
+      if other.to_sql != to_sql
+        <<-SQL.gsub(/^ {8}/, '')
+        #{drop}
+        #{to_sql}
         SQL
       end
-
-
     end
 
     def downgrade(other)
-      return self.drop if other.nil?
+      return drop if other.nil?
 
-      if other.identify != self.identify
-        raise "Not the Same Objects!"
+      if other.identify != identify
+        fail 'Not the Same Objects!'
       end
 
-      if other.to_sql != self.to_sql
-         <<-SQL.gsub(/^ {8}/, '')
-        #{self.drop}
+      if other.to_sql != to_sql
+        <<-SQL.gsub(/^ {8}/, '')
+        #{drop}
         #{other.to_sql}
         SQL
       end
@@ -75,6 +72,5 @@ module Dumbo
     def execute(sql)
       ActiveRecord::Base.connection.execute(sql)
     end
-
   end
 end

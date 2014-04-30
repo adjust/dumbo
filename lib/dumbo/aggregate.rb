@@ -30,13 +30,12 @@ module Dumbo
         WHERE aggfnoid = #{oid}
       SQL
 
-      result.first.each do |k,v|
-        send("#{k}=",v) rescue nil
+      result.first.each do |k, v|
+        send("#{k}=", v) rescue nil
       end
 
       result.first
     end
-
 
     def to_sql
       attributes = []
@@ -52,6 +51,5 @@ module Dumbo
       );
       SQL
     end
-
   end
 end

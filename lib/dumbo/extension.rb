@@ -16,7 +16,7 @@ module Dumbo
       def version!(string)
         content = File.read(control_file)
         new_content = content.gsub(version, new_version)
-        File.open(control_file, "w") { |file| file.puts new_content }
+        File.open(control_file, 'w') { |file| file.puts new_content }
       end
 
       def file_name
@@ -44,7 +44,7 @@ module Dumbo
 
     # main releases without migrations
     def releases
-      Dir.glob("#{name}--*.sql").reject{ |f| f =~ /\d--\d/ }
+      Dir.glob("#{name}--*.sql").reject { |f| f =~ /\d--\d/ }
     end
 
     def versions
@@ -88,24 +88,24 @@ module Dumbo
           ORDER BY 1;
         SQL
 
-        result.map{|r| PgObject.new(r['objid']).get(r['classid'])}
+        result.map { |r| PgObject.new(r['objid']).get(r['classid']) }
       end
     end
 
     def types
-      objects.select{|o| o.kind_of?(Type)}
+      objects.select { |o| o.kind_of?(Type) }
     end
 
     def functions
-      objects.select{|o| o.kind_of?(Function)}
+      objects.select { |o| o.kind_of?(Function) }
     end
 
     def casts
-      objects.select{|o| o.kind_of?(Cast)}
+      objects.select { |o| o.kind_of?(Cast) }
     end
 
     def operators
-      objects.select{|o| o.kind_of?(Operator)}
+      objects.select { |o| o.kind_of?(Operator) }
     end
 
     private

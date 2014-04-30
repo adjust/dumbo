@@ -11,13 +11,10 @@ module SqlHelper
       Hash[hash_map]
     end
     # binding.pry
-    field ? result.map{|h| h[field]} : result
+    field ? result.map { |h| h[field] } : result
   end
 
   def install_extension
     sql "CREATE EXTENSION #{Dumbo::Extension.new.name}"
   end
 end
-
-
-

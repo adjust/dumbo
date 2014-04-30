@@ -7,10 +7,9 @@ require 'pathname'
 
 module Cli
   class Dumbo < Thor
+    desc 'new name', 'creates a new extension skeleton'
 
-    desc "new name", "creates a new extension skeleton"
-
-    def new(name, initial_version='0.0.1')
+    def new(name, initial_version = '0.0.1')
       mkdir("#{name}/sql")
       mkdir("#{name}/src")
       mkdir("#{name}/spec")
@@ -34,9 +33,9 @@ module Cli
           next
         end
 
-        if dest_name.extname =='.erb'
+        if dest_name.extname == '.erb'
           eruby = Erubis::Eruby.new(File.read(template))
-          content = eruby.result({ext_name: name})
+          content = eruby.result(ext_name: name)
           create "#{name}/#{dest_name.sub_ext('')}", content
         else
           cp template, "#{name}/#{dest_name}"
@@ -55,21 +54,21 @@ module Cli
     no_commands do
       def mkdir(path, silent_skip = false)
         if File.directory?(path)
-          say_status("skip", "#{path}", :yellow) unless silent_skip
+          say_status('skip', "#{path}", :yellow) unless silent_skip
         else
           FileUtils.mkdir_p(path)
-          say_status("create", "#{path}")
+          say_status('create', "#{path}")
         end
       end
 
       def create(path, content, silent_skip = false)
-        if File.exists? path
-          say_status("skip", path, :yellow) unless silent_skip
+        if File.exist? path
+          say_status('skip', path, :yellow) unless silent_skip
         else
-          File.open(path,'w') do |f|
+          File.open(path, 'w') do |f|
             f.puts content
           end
-          say_status("create", path)
+          say_status('create', path)
         end
       end
 
@@ -77,18 +76,18 @@ module Cli
         Array(src).each do |p|
           path = Pathname.new(p)
           if File.directory?(dest)
-            if File.exists?("#{dest}/#{path.basename}")
-              say_status("skip", "#{dest}/#{path.basename}", :yellow) unless silent_skip
+            if File.exist?("#{dest}/#{path.basename}")
+              say_status('skip', "#{dest}/#{path.basename}", :yellow) unless silent_skip
             else
               FileUtils.cp_r p, dest
-              say_status("create", "#{dest}/#{path.basename}")
+              say_status('create', "#{dest}/#{path.basename}")
             end
           else
-            if File.exists?(dest)
-              say_status("skip", dest, :yellow) unless silent_skip
+            if File.exist?(dest)
+              say_status('skip', dest, :yellow) unless silent_skip
             else
               FileUtils.cp_r p, dest
-              say_status("create", dest)
+              say_status('create', dest)
             end
           end
         end
