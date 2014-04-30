@@ -1,6 +1,6 @@
 module Dumbo
   class CompositeType < Type
-    attr_accessor  :attributes
+    attr_accessor :attributes
 
     def load_attributes
       super
@@ -16,11 +16,11 @@ module Dumbo
       SQL
 
       attribute = Struct.new(:name, :type)
-      @attributes = res.map{|r| attribute.new(r['attname'],r['typname'])}
+      @attributes = res.map { |r| attribute.new(r['attname'], r['typname']) }
     end
 
     def to_sql
-      attr_str = attributes.map{|a| "#{a.name} #{a.type}"}.join(",\n  ")
+      attr_str = attributes.map { |a| "#{a.name} #{a.type}" }.join(",\n  ")
       <<-SQL.gsub(/^ {6}/, '')
       CREATE TYPE #{name} AS (
         #{attr_str}

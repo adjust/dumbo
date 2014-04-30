@@ -1,4 +1,4 @@
-require "rake"
+require 'rake'
 require 'rake/tasklib'
 require 'active_record'
 
@@ -9,7 +9,7 @@ module Dumbo
       @name = name
 
       namespace name do
-        task environment: ['db:configure_connection' ]
+        task environment: ['db:configure_connection']
 
         task :configuration do
           @config = YAML.load_file('config/database.yml')[ENV['DUMBO_ENV']]
@@ -38,11 +38,11 @@ module Dumbo
           end
 
           task load_structure: :environment do
-            filename = ENV['DB_STRUCTURE'] || File.join("db", "structure.sql")
+            filename = ENV['DB_STRUCTURE'] || File.join('db', 'structure.sql')
             ActiveRecord::Tasks::DatabaseTasks.structure_load(@config, filename)
           end
 
-          desc "Re-create and prepare test database"
+          desc 'Re-create and prepare test database'
           task prepare: [:environment, :drop, :create]
         end
       end

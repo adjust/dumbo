@@ -1,6 +1,6 @@
 module Dumbo
   class Type < PgObject
-    attr_accessor  :name, :type, :typrelid
+    attr_accessor :name, :type, :typrelid
     identfied_by :name
 
     def load_attributes
@@ -26,6 +26,5 @@ module Dumbo
     def drop
       "DROP TYPE #{name};"
     end
-
   end
 end

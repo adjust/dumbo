@@ -1,18 +1,18 @@
 module Dumbo
   class BaseType < Type
-    attr_accessor  :input_function,
-                    :output_function,
-                    :receive_function,
-                    :send_function,
-                    :analyze_function,
-                    :category,
-                    :default,
-                    :alignment,
-                    :storage,
-                    :type,
-                    :internallength,
-                    :attribute_name,
-                    :typrelid
+    attr_accessor :input_function,
+                  :output_function,
+                  :receive_function,
+                  :send_function,
+                  :analyze_function,
+                  :category,
+                  :default,
+                  :alignment,
+                  :storage,
+                  :type,
+                  :internallength,
+                  :attribute_name,
+                  :typrelid
 
     def load_attributes
       sql = <<-SQL
@@ -44,15 +44,15 @@ module Dumbo
       SQL
 
       result = execute sql
-      result.first.each do |k,v|
-        send("#{k}=",v) rescue nil
+      result.first.each do |k, v|
+        send("#{k}=", v) rescue nil
       end
 
       result.first
     end
 
     def to_sql
-        <<-SQL.gsub(/^ {8}/, '')
+      <<-SQL.gsub(/^ {8}/, '')
         CREATE TYPE #{name}(
           INPUT=#{input_function},
           OUTPUT=#{output_function},

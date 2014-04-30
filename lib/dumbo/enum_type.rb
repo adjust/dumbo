@@ -2,7 +2,6 @@ module Dumbo
   class EnumType < Type
     attr_accessor :labels
 
-
     def load_attributes
       super
 
@@ -12,11 +11,11 @@ module Dumbo
           WHERE enumtypid = #{oid}
           ORDER by enumsortorder
         SQL
-        @labels = res.to_a.map{|r| r['enumlabel']}
+      @labels = res.to_a.map { |r| r['enumlabel'] }
     end
 
     def to_sql
-      lbl_str = labels.map{|l| "'"+l+"'"}.join(",\n  ")
+      lbl_str = labels.map { |l| "'" + l + "'" }.join(",\n  ")
 
       <<-SQL.gsub(/^ {6}/, '')
       CREATE TYPE #{name} AS ENUM (
