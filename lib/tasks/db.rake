@@ -37,7 +37,7 @@ namespace :db do
 
   namespace :test do
     task :environment do
-      ENV['DUMBO_ENV'] ||= 'test'
+      ENV['DUMBO_ENV'] = 'test'
       ActiveRecord::Schema.verbose = false
     end
 
