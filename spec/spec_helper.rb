@@ -1,5 +1,4 @@
 require 'rubygems'
-require 'factory_girl'
 
 ENV['DUMBO_ENV']  ||= 'test'
 require File.expand_path('../../config/boot', __FILE__)
@@ -12,7 +11,6 @@ RSpec.configure do |config|
   config.fail_fast                                        = false
   config.order                                            = 'random'
   config.treat_symbols_as_metadata_keys_with_true_values  = true
-  config.include FactoryGirl::Syntax::Methods
   config.filter_run focus: true
   config.run_all_when_everything_filtered                 = true
 

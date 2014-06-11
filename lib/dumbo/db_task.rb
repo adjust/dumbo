@@ -1,6 +1,7 @@
 require 'rake'
 require 'rake/tasklib'
 require 'active_record'
+require 'yaml'
 
 module Dumbo
   class DbTask < ::Rake::TaskLib

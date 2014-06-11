@@ -20,7 +20,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rake"
   spec.add_dependency 'erubis'
   spec.add_dependency 'rspec', '~> 2.14.0'
-  spec.add_dependency'factory_girl', '~> 4.0'
   spec.add_dependency 'activerecord'
   spec.add_dependency 'pg', '> 0.17'
 
