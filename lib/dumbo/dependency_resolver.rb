@@ -32,11 +32,10 @@ module Dumbo
       @resolve_list = []
       @temp_list = list
       loops = 0
-      until @temp_list.empty? || loops > 10
-        @temp_list.each do |(file, deps)|
-          _resolve(file, deps)
-        end
-        loops += 1
+      # TODO find a better way here
+      until @temp_list.empty? || loops * 10 > @temp_list.size
+        file, deps = @temp_list.first
+        loops += 1 unless _resolve(file, deps)
       end
 
       fail "Can't resolve dependencies" if loops > 10
@@ -47,15 +46,16 @@ module Dumbo
     def _resolve(file, deps)
       if deps.empty?
         @resolve_list.push(@temp_list.shift.first)
-        return
+        return true
       end
 
       left = deps - @resolve_list
       if left.empty?
         @resolve_list.push(@temp_list.shift.first)
-        return
+        return true
       else
         @temp_list.push @temp_list.shift
+        return false
       end
     end
 
