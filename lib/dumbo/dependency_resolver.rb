@@ -92,11 +92,12 @@ module Dumbo
       if p.exist? && p.extname.present?
         return p.to_s
       elsif p.extname.empty?
-        %w(.sql .erb).each do |ext|
+        %w(.sql .erb .sql.erb).each do |ext|
           new_p = p.sub_ext(ext)
           return new_p.to_s if new_p.exist?
         end
       end
+
       fail DependencyNotFound.new(dep, file)
     end
   end

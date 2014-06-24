@@ -15,6 +15,7 @@ require 'dumbo/extension_version'
 require 'dumbo/operator'
 require 'dumbo/range_type'
 require 'dumbo/version'
+require 'dumbo/binding_loader'
 
 module Dumbo
   # Your code goes here...

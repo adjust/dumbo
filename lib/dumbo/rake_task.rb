@@ -98,13 +98,7 @@ module Dumbo
     end
 
     def get_bindings(file)
-      base = Pathname.new(file).sub_ext('.yml').basename
-      yaml = Pathname.new('config').join(base)
-      if yaml.exist?
-        YAML.load_file(yaml)
-      else
-        {}
-      end
+      BindingLoader.new(file).load
     end
   end
 end
