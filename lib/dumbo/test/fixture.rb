@@ -19,12 +19,12 @@ module Dumbo
         instance_eval(contents)
         @fixtures
       rescue SyntaxError => e
-        syntax_msg = e.message.gsub("#{pgfile}:", 'on line ')
-        raise PgfileError, "Fixture syntax error #{syntax_msg}"
+        syntax_msg = e.message.gsub("#{file}:", 'on line ')
+        raise "Fixture syntax error #{syntax_msg}"
       rescue ScriptError, RegexpError, NameError, ArgumentError => e
         e.backtrace[0] = "#{e.backtrace[0]}: #{e.message} (#{e.class})"
         puts e.backtrace.join("\n       ")
-        raise PgfileError, "There was an error in your Fixture," \
+        raise "There was an error in your Fixture," \
           + e.message
       end
 
