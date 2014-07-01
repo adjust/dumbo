@@ -71,8 +71,7 @@ module Dumbo
 
     # source sql file list
     def file_list
-      files = FileList.new('sql/**/*.{sql,erb}'){|fl| fl.exclude(Regexp.new(Extension.name))}
-      DependencyResolver.new(files).resolve
+      DependencyResolver.new(Dir.glob('sql/**/*.{sql,erb}')).resolve
     end
 
     def concatenate(lines, target)
