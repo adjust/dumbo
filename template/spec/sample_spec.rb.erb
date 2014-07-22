@@ -7,7 +7,7 @@ describe '<%= ext_name %>' do
 
   describe "function foo" do
     it "shoul return the input" do
-      sql("SELECT foo(10)", 'foo').first.should eq 10
+      query("SELECT foo(10)").should match '10'
     end
   end
 end

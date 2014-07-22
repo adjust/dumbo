@@ -1,18 +1,18 @@
 require 'spec_helper'
 describe Dumbo::Aggregate do
   let(:avg) do
-    oid = sql("SELECT p.oid
+    oid = query("SELECT p.oid
               FROM pg_proc p
               JOIN pg_aggregate ag ON p.oid = ag.aggfnoid
-              WHERE proname='avg' AND pg_get_function_arguments(p.oid) = 'integer'", 'oid').first
+              WHERE proname='avg' AND pg_get_function_arguments(p.oid) = 'integer'").first['oid']
     Dumbo::Aggregate.new(oid)
   end
 
   let(:min) do
-    oid = sql("SELECT p.oid
+    oid = query("SELECT p.oid
               FROM pg_proc p
               JOIN pg_aggregate ag ON p.oid = ag.aggfnoid
-              WHERE proname='min' AND pg_get_function_arguments(p.oid) = 'integer'", 'oid').first
+              WHERE proname='min' AND pg_get_function_arguments(p.oid) = 'integer'").first['oid']
     Dumbo::Aggregate.new(oid)
   end
 

@@ -1,5 +1,5 @@
 require 'spec_helper'
-
+include ExtensionHelper
 describe Dumbo::Extension do
   describe 'extension setup' do
     let(:extension) { described_class.new('dumbo_sample', '0.0.3') }

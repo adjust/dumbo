@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'dumbo/test'
 
 ENV['DUMBO_ENV']  ||= 'test'
 require File.expand_path('../../config/boot', __FILE__)
@@ -22,6 +23,6 @@ RSpec.configure do |config|
     end
   end
 
-  config.include(SqlHelper)
-  config.include(ExtensionHelper)
+  config.include(Dumbo::Test::Helper)
+  config.include(Dumbo::Matchers)
 end

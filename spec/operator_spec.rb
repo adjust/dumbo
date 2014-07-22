@@ -1,7 +1,7 @@
 require 'spec_helper'
 describe Dumbo::Operator do
   let(:operator) do
-    oid = sql("SELECT oid FROM pg_operator WHERE oprname = '&&' AND format_type(oprleft,NULL) = 'box' AND format_type(oprright,NULL) ='box'", 'oid').first
+    oid = query("SELECT oid FROM pg_operator WHERE oprname = '&&' AND format_type(oprleft,NULL) = 'box' AND format_type(oprright,NULL) ='box'").first['oid']
     Dumbo::Operator.new(oid).get
   end
 

@@ -13,7 +13,7 @@ describe Dumbo::Type do
   let(:extension) { Dumbo::Extension.new('dumbo_sample', version) }
 
   let(:type) do
-    oid = sql("SELECT oid FROM pg_type WHERE typname = '#{type_name}'", 'oid').first
+    oid = query("SELECT oid FROM pg_type WHERE typname = '#{type_name}'").first['oid']
     Dumbo::Type.new(oid).get
   end
 
