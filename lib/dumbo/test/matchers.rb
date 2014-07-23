@@ -22,7 +22,7 @@ module Dumbo
     end
 
     def flat_expected(expected)
-      expected.size == 1 ? expected.first : expected
+      expected.size == 1 ? expected.first.to_s : expected.map(&:to_s)
     end
 
     class QueryMatcher < RSpec::Matchers::BuiltIn::MatchArray
