@@ -7,6 +7,7 @@ require 'logger'
 require 'active_record'
 require 'dumbo/extension'
 require 'dumbo/dependency_resolver'
+require 'rspec/core'
 
 module Dumbo
   class RakeTask < ::Rake::TaskLib
@@ -16,6 +17,8 @@ module Dumbo
       @name = name
 
       namespace name do
+        Dumbo::DbTask.new(:db)
+
         desc 'creates and installs extension'
         task all: [:src, Extension.file_name, :install]
 
@@ -61,6 +64,30 @@ module Dumbo
           Extension.version!(v)
 
           Rake::Task["#{name}:all"].invoke
+        end
+
+        namespace :test do
+          desc 'creates regression tests from specs and runs them'
+          task regression: ['all', 'db:test:prepare'] do
+            ENV['DUMBO_REGRESSION'] = 'true'
+            RSpec::Core::RakeTask.new(:spec).run_task(false)
+
+            if $?.success?
+              test_files = Rake::FileList.new("test/sql/**/*.sql")
+              out_files  = test_files.pathmap("%{^test/sql/,test/expected/}X.out")
+              out_files.each{|f| FileUtils.touch(f)}
+              system('make installcheck &> /dev/null')
+
+              out_files.pathmap("%{^test/expected/,results/}p").each do |f|
+                FileUtils.cp(f,'test/expected/')
+                File.delete(f)
+              end
+
+              system('make installcheck')
+            else
+              Dir.glob('test/*').each{|f| File.delete(f)}
+            end
+          end
         end
       end
     end
