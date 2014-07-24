@@ -27,6 +27,11 @@ module Dumbo
         def format_message(severity, timestamp, progname, msg)
           "#{msg.gsub(/\e\[(\d+)m/, '').gsub(/.*?\(.*?ms\)/,'').gsub(/^ +/,'')};\n"
         end
+
+        def add(*args)
+          return unless args.first == DEBUG
+          super
+        end
       end
 
 
