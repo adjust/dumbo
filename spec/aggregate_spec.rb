@@ -17,7 +17,7 @@ describe Dumbo::Aggregate do
   end
 
   it 'avg should have a sql representation' do
-    avg.to_sql.should eq <<-SQL.gsub(/^ {6}/, '')
+    expect(avg.to_sql).to eq <<-SQL.gsub(/^ {6}/, '')
       CREATE AGGREGATE avg(integer) (
         SFUNC = int4_avg_accum,
         STYPE = int8[],
@@ -28,7 +28,7 @@ describe Dumbo::Aggregate do
   end
 
   it 'min should have a sql representation' do
-    min.to_sql.should eq <<-SQL.gsub(/^ {6}/, '')
+    expect(min.to_sql).to eq <<-SQL.gsub(/^ {6}/, '')
       CREATE AGGREGATE min(integer) (
         SFUNC = int4smaller,
         STYPE = int4,

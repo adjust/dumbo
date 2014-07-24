@@ -1,4 +1,4 @@
-#require 'rspec/matchers/built_in/match_array'
+require 'pry'
 module Dumbo
   module Matchers
 
@@ -10,6 +10,7 @@ module Dumbo
     # query("SELECT id, name FROM users ORDER BY id").should match_ordered ['id', 'name'], ['1', 'foo'] ,['2', 'bar'] ,['3', 'baz']
 
     def match(*expected)
+      return super if expected.first.is_a? Regexp
       QueryMatcher.new(flat_expected(expected))
     end
 
@@ -25,7 +26,7 @@ module Dumbo
       expected.size == 1 ? expected.first.to_s : expected.map(&:to_s)
     end
 
-    class QueryMatcher < RSpec::Matchers::BuiltIn::MatchArray
+    class QueryMatcher < RSpec::Matchers::BuiltIn::ContainExactly
       attr_reader :actual, :expected, :options
 
       def initialize(expected = UNDEFINED, options={})

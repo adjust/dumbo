@@ -3,7 +3,7 @@ module ActiveRecord
     class PostgreSQLAdapter
       module DatabaseStatements
         def warn(msg)
-          return if msg =~ /^unknown OID:/
+          return if msg =~ /^unknown OID/
           super
         end
       end

@@ -6,7 +6,7 @@ describe Dumbo::Operator do
   end
 
   it 'should have a sql representation' do
-    operator.to_sql.should eq <<-SQL.gsub(/^ {4}/, '')
+    expect(operator.to_sql).to eq <<-SQL.gsub(/^ {4}/, '')
     CREATE OPERATOR && (
       PROCEDURE = box_overlap,
       LEFTARG = box,
@@ -19,11 +19,11 @@ describe Dumbo::Operator do
   end
 
   it 'should have a uniq identfier' do
-    operator.identify.should eq ['&&', 'box', 'box']
+    expect(operator.identify).to eq ['&&', 'box', 'box']
   end
 
   it 'should have upgrade sql' do
-    operator.upgrade(nil).should eq <<-SQL.gsub(/^ {4}/, '')
+    expect(operator.upgrade(nil)).to eq <<-SQL.gsub(/^ {4}/, '')
     CREATE OPERATOR && (
       PROCEDURE = box_overlap,
       LEFTARG = box,
@@ -36,6 +36,6 @@ describe Dumbo::Operator do
   end
 
   it 'should have downgrade sql' do
-    operator.downgrade(nil).should eq 'DROP OPERATOR &&;'
+    expect(operator.downgrade(nil)).to eq 'DROP OPERATOR &&;'
   end
 end

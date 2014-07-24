@@ -10,7 +10,7 @@ describe Dumbo::ExtensionMigrator do
   let(:migrator) { Dumbo::ExtensionMigrator.new('dumbo_sample', '0.0.1', '0.0.2') }
 
   it 'should provide upgrade sql' do
-    migrator.upgrade.should eq <<-SQL.gsub(/^ {4}/, '')
+    expect(migrator.upgrade).to eq <<-SQL.gsub(/^ {4}/, '')
     ----functions----
     CREATE OR REPLACE FUNCTION foo(integer)
      RETURNS integer
@@ -25,7 +25,7 @@ describe Dumbo::ExtensionMigrator do
   end
 
   it 'should provide downgrade sql' do
-    migrator.downgrade.should eq <<-SQL.gsub(/^ {4}/, '')
+    expect(migrator.downgrade).to eq <<-SQL.gsub(/^ {4}/, '')
     ----functions----
     CREATE OR REPLACE FUNCTION foo(integer)
      RETURNS integer

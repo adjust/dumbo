@@ -12,11 +12,11 @@ describe Dumbo::Extension do
     end
 
     it 'should return extension obj_id' do
-      extension.obj_id.should ~ /\d+/
+      expect(extension.obj_id).to match /\d+/
     end
 
     it 'should return a list of objects' do
-      extension.objects.should have(5).items
+      expect(extension.objects.size).to be 5
     end
 
     describe 'handling types' do
@@ -26,8 +26,8 @@ describe Dumbo::Extension do
 
       subject { extension.types }
 
-      it { subject.map(&:class).should match_array classes }
-      it { subject.map(&:name).should match_array names }
+      it { expect(subject.map(&:class)).to match_array classes }
+      it { expect(subject.map(&:name)).to match_array names }
     end
   end
 
@@ -38,11 +38,11 @@ describe Dumbo::Extension do
     end
 
     before do
-      described_class.any_instance.stub(:releases).and_return(releases)
+      expect_any_instance_of(described_class).to receive(:releases){releases}
     end
 
     subject { described_class.new.versions.map(&:to_s) }
 
-    it { should match_array ['0.10.5', '0.10.7', '0.11.0', '0.12', '1.0.0'] }
+    it { is_expected.to match_array ['0.10.5', '0.10.7', '0.11.0', '0.12', '1.0.0'] }
   end
 end
