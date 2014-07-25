@@ -30,7 +30,8 @@ module Dumbo
     end
 
     def flat_expected(expected)
-      expected.size == 1 ? expected.first.to_s : expected.map(&:to_s)
+      expected = expected.map{|e| e.nil? ? e : e.to_s}
+      expected.size == 1 ? expected.first : expected
     end
 
     class ErrorMatcher < RSpec::Matchers::BuiltIn::BaseMatcher
