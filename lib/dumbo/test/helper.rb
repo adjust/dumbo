@@ -40,7 +40,11 @@ module Dumbo
       end
 
       def query(sql)
-        ActiveRecord::Base.connection.select_all(sql, 'SQL', [])
+        begin
+          ActiveRecord::Base.connection.select_all(sql, 'SQL', [])
+        rescue ActiveRecord::StatementInvalid => e
+          e
+        end
       end
 
       def create(table_name, values)

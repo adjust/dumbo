@@ -2,7 +2,7 @@ module Dumbo
   module Matchers
 
     # test a query result against an expectation
-    # e.g.
+    # example
     # query("SELECT COUNT(*) FROM users").should match '3'
     # query("SELECT id, name FROM users").should match ['1', 'foo'] ,['2', 'bar'] ,['3', 'baz']
     # query("SELECT id, name FROM users").should match_with_header ['id', 'name'], ['1', 'foo'] ,['2', 'bar'] ,['3', 'baz']
@@ -21,8 +21,41 @@ module Dumbo
       QueryMatcher.new(flat_expected(expected), ordered: true )
     end
 
+    # test a query result against an error
+    # example
+    # query("SELECT 'foo'::date").should throw_error('ERROR:  invalid input syntax for type date: "foo"')
+
+    def throw_error(expected)
+      ErrorMatcher.new(expected)
+    end
+
     def flat_expected(expected)
       expected.size == 1 ? expected.first.to_s : expected.map(&:to_s)
+    end
+
+    class ErrorMatcher < RSpec::Matchers::BuiltIn::BaseMatcher
+      attr_reader :actual, :expected, :options, :actual_message
+
+      private
+
+      def match(expected, actual)
+        return false unless is_error?
+        @actual_message = @actual.message.split("\n").first.gsub(/^PG::InternalError: */,'')
+        actual_message.gsub(/^ERROR: */,'') == expected.gsub(/^ERROR: */,'')
+      end
+
+      def is_error?
+        actual.kind_of?(ActiveRecord::StatementInvalid)
+      end
+
+      def failure_message_when_not_error
+        "\nexpected error #{expected} but nothing was raised"
+      end
+
+      def failure_message
+        return "\nexpected error #{expected} but nothing was raised" unless is_error?
+        "expected ERROR: #{expected} got #{actual_message}"
+      end
     end
 
     class QueryMatcher < RSpec::Matchers::BuiltIn::ContainExactly
@@ -34,6 +67,7 @@ module Dumbo
       end
 
       def matches?(actual)
+        raise actual if actual.kind_of?(Exception)
         @actual = actual
         convert_actual
         convert_expected
