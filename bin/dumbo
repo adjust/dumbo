@@ -6,8 +6,32 @@ require 'fileutils'
 require 'pathname'
 
 module Cli
+  class Generate < Thor
+    desc 'spec <name>', 'Add a new spec file named <name> as spec/<name>_spec.rb'
+    def spec(name)
+      file_name = "spec/#{name}_spec.rb"
+      if File.exist?(file_name)
+        say_status('already exists', file_name, :yellow)
+        return
+      end
+
+      File.open("spec/#{name}_spec.rb", 'w') do |f|
+        f.puts <<-EOF.gsub('          ','')
+          require 'spec_helper'
+
+          describe '#{name}' do
+            before do
+              install_extension
+            end
+          end
+        EOF
+      end
+      say_status('create', file_name)
+    end
+  end
+
   class Dumbo < Thor
-    desc 'new name', 'creates a new extension skeleton'
+    desc 'new <name>', 'creates a new extension skeleton'
 
     def new(name, initial_version = '0.0.1')
       mkdir("#{name}/sql")
@@ -50,6 +74,11 @@ module Cli
         requires = ''
       STR
     end
+
+    desc "g GENERATOR args", "generates files for the given generator"
+    subcommand "g", Generate
+
+
 
     no_commands do
       def mkdir(path, silent_skip = false)
