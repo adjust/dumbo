@@ -30,7 +30,7 @@ module Dumbo
     end
 
     def flat_expected(expected)
-      expected = expected.map{|e| e.nil? ? e : e.to_s}
+      expected = expected.map{|e| e.nil? || e.kind_of?(Array) ? e : e.to_s}
       expected.size == 1 ? expected.first : expected
     end
 
