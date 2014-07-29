@@ -24,7 +24,12 @@ module Dumbo
 
         desc 'installs the extension'
         task :install do
-          system('make clean && make && make install')
+          cmd = if ENV['DUMBO_USE_SUDO']
+            'make clean && make && sudo make install'
+          else
+            'make clean && make && make install'
+          end
+          system(cmd)
         end
 
         desc 'concatenates files'
@@ -70,6 +75,10 @@ module Dumbo
           desc 'creates regression tests from specs and runs them'
           task regression: ['all', 'db:test:prepare'] do
             ENV['DUMBO_REGRESSION'] = 'true'
+
+            FileUtils.mkdir_p('test/sql/')
+            FileUtils.mkdir_p('test/expected/')
+
             RSpec::Core::RakeTask.new(:spec).run_task(false)
 
             if $?.success?
