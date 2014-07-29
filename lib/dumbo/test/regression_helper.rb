@@ -1,4 +1,6 @@
 RSpec.configure do |config|
+  config.order = 'defined'
+
   config.before(:all) do |e|
     path =  self.class.metadata[:file_path]
     test_file = Pathname.new(path).basename.sub_ext('.sql').sub('_spec','')
