@@ -34,29 +34,46 @@ module Dumbo
       expected.size == 1 ? expected.first : expected
     end
 
-    class ErrorMatcher < RSpec::Matchers::BuiltIn::BaseMatcher
+    class ErrorMatcher < RSpec::Matchers::BuiltIn::RaiseError
       attr_reader :actual, :expected, :options, :actual_message
+
+      def initialize(*args)
+        super
+        @expected_error = ActiveRecord::StatementInvalid
+      end
 
       private
 
-      def match(expected, actual)
-        return false unless is_error?
-        @actual_message = @actual.message.split("\n").first.gsub(/^PG::InternalError: */,'')
-        actual_message.gsub(/^ERROR: */,'') == expected.gsub(/^ERROR: */,'')
+      def verify_message
+        return true if @expected_message.nil?
+        values_match?(@expected_message, @actual_error.message)
       end
 
-      def is_error?
-        actual.kind_of?(ActiveRecord::StatementInvalid)
+      def values_match?(expected_message, actual_message)
+        return super if actual_message.kind_of?(Exception)
+        actual_message = actual_message.split("\n").first.gsub(/^PG::.*?: */,'')
+        actual_message.gsub(/^ERROR: */,'') == expected_message.gsub(/^ERROR: */,'')
       end
+      # private
 
-      def failure_message_when_not_error
-        "\nexpected error #{expected} but nothing was raised"
-      end
+      # def match(expected, actual)
+      #   return false unless is_error?
+      #   @actual_message = @actual.message.split("\n").first.gsub(/^PG::InternalError: */,'')
+      #   actual_message.gsub(/^ERROR: */,'') == expected.gsub(/^ERROR: */,'')
+      # end
 
-      def failure_message
-        return "\nexpected error #{expected} but nothing was raised" unless is_error?
-        "expected ERROR: #{expected} got #{actual_message}"
-      end
+      # def is_error?
+      #   actual.kind_of?(ActiveRecord::StatementInvalid)
+      # end
+
+      # def failure_message_when_not_error
+      #   "\nexpected error #{expected} but nothing was raised"
+      # end
+
+      # def failure_message
+      #   return "\nexpected error #{expected} but nothing was raised" unless is_error?
+      #   "expected ERROR: #{expected} got #{actual_message}"
+      # end
     end
 
     class QueryMatcher < RSpec::Matchers::BuiltIn::ContainExactly
