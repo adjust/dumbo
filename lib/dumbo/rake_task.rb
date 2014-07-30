@@ -8,6 +8,7 @@ require 'active_record'
 require 'dumbo/extension'
 require 'dumbo/dependency_resolver'
 require 'rspec/core'
+require 'dumbo/db_task'
 
 module Dumbo
   class RakeTask < ::Rake::TaskLib
@@ -64,7 +65,6 @@ module Dumbo
         desc 'upgrate .control file to a new version'
         task :new_version, :level do |t, args|
           args.with_defaults(level: 'patch')
-
           v = new_version(args[:level])
           Extension.version!(v)
 

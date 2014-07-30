@@ -13,7 +13,7 @@ module Dumbo
         new.versions
       end
 
-      def version!(string)
+      def version!(new_version)
         content = File.read(control_file)
         new_content = content.gsub(version, new_version)
         File.open(control_file, 'w') { |file| file.puts new_content }
