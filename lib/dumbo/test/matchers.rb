@@ -30,8 +30,15 @@ module Dumbo
     end
 
     def flat_expected(expected)
-      expected = expected.map{|e| e.nil? || e.kind_of?(Array) ? flat_expected(e) : e.to_s}
+      expected = stringify_array(expected)
       expected.size == 1 ? expected.first : expected
+    end
+
+    def stringify_array(arr)
+      arr.map do |e|
+        next e if e.nil?
+        e.kind_of?(Array) ? stringify_array(e) : e.to_s
+      end
     end
 
     class ErrorMatcher < RSpec::Matchers::BuiltIn::RaiseError
