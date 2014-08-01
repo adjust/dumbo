@@ -31,6 +31,7 @@ module Dumbo
             'make clean && make && make install'
           end
           system(cmd)
+          fail "make failed with error check output" unless $?.success?
         end
 
         desc 'concatenates files'
