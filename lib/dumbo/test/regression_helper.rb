@@ -3,7 +3,7 @@ RSpec.configure do |config|
 
   config.before(:all) do |e|
     path =  self.class.metadata[:file_path]
-    test_file = Pathname.new(path).basename.sub_ext('.sql').sub('_spec','')
+    test_file = Pathname.new(path).basename.sub_ext('.sql').sub('_spec','_test')
     test_path = test_file.realdirpath  File.expand_path('test/sql')
     FileUtils.touch(test_path)
 
