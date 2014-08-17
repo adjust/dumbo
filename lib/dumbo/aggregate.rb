@@ -10,6 +10,7 @@ module Dumbo
         pg_get_function_arguments(pr.oid) AS input_data_type,
         aggtransfn AS sfunc,
         aggfinalfn AS ffunc,
+        aggcollectfn,
         agginitval AS initial_condition,
         op.oprname AS sort_operator,
         proargtypes,
