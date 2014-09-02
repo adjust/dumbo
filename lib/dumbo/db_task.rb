@@ -40,7 +40,11 @@ module Dumbo
 
           task load_structure: :environment do
             filename = ENV['DB_STRUCTURE'] || File.join('db', 'structure.sql')
-            ActiveRecord::Tasks::DatabaseTasks.structure_load(@config, filename)
+            if File.exists?(filename)
+              ActiveRecord::Tasks::DatabaseTasks.structure_load(@config, filename)
+            else
+              puts "File not found skip"
+            end
           end
 
           desc 'Re-create and prepare test database'
