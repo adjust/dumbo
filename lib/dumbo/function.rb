@@ -95,7 +95,7 @@ module Dumbo
     end
 
     def to_sql
-      definition.gsub("public.#{name}", name)
+      definition.gsub("public.#{name}", name) + ';'
     end
   end
 end
