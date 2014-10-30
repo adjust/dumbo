@@ -40,7 +40,7 @@ module Dumbo
     end
 
     def downgrade(other)
-      return to_sql if other.nil?
+      return drop if other.nil?
 
       if other.identify != identify
         fail 'Not the Same Objects!'

@@ -108,6 +108,10 @@ module Dumbo
       objects.select { |o| o.kind_of?(Operator) }
     end
 
+    def aggregates
+      objects.select { |o| o.kind_of?(Aggregate) }
+    end
+
     private
 
     def execute(sql)

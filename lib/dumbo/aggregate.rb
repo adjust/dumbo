@@ -2,6 +2,7 @@ module Dumbo
   class Aggregate < PgObject
     attr_accessor :name, :sfunc, :transname, :ffunc, :input_data_type, :state_data_type,
                   :initial_condition, :sort_operator
+    identfied_by :name, :input_data_type
 
     def load_attributes
       result = execute <<-SQL
@@ -43,13 +44,17 @@ module Dumbo
       attributes << "STYPE = #{state_data_type}"
       attributes << "FINALFUNC = #{ffunc}" if ffunc && ffunc != '-'
       attributes << "INITCOND = '#{initial_condition}'" if initial_condition
-      attributes << "SORTOP = #{sort_operator}" if sort_operator
+      attributes << "SORTOP = \"#{sort_operator}\"" if sort_operator
 
       <<-SQL.gsub(/^ {6}/, '')
       CREATE AGGREGATE #{name}(#{input_data_type}) (
         #{attributes.join(",\n  ")}
       );
       SQL
+    end
+
+    def drop
+      "DROP AGGREGATE #{name} (#{input_data_type});"
     end
   end
 end
