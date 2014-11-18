@@ -22,20 +22,7 @@ describe Dumbo::Operator do
     expect(operator.identify).to eq ['&&', 'box', 'box']
   end
 
-  it 'should have upgrade sql' do
-    expect(operator.upgrade(nil)).to eq <<-SQL.gsub(/^ {4}/, '')
-    CREATE OPERATOR && (
-      PROCEDURE = box_overlap,
-      LEFTARG = box,
-      RIGHTARG = box,
-      COMMUTATOR = &&,
-      RESTRICT = areasel,
-      JOIN = areajoinsel
-    );
-    SQL
-  end
-
-  it 'should have downgrade sql' do
-    expect(operator.downgrade(nil)).to eq 'DROP OPERATOR &&;'
+  it 'should have drop sql' do
+    expect(operator.drop).to eq 'DROP OPERATOR && (box, box);'
   end
 end

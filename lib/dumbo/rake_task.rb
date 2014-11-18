@@ -54,7 +54,7 @@ module Dumbo
         end
 
         desc 'creates migration files for the last two versions'
-        task :migrations do
+        task migrations: 'db:load_structure' do
           old_version, new_version = Extension.versions.last(2).map(&:to_s)
 
           if new_version

@@ -39,23 +39,7 @@ module Dumbo
     def load_attributes
     end
 
-    def upgrade(other)
-      return to_sql if other.nil?
-
-      if other.identify != identify
-        fail 'Not the Same Objects!'
-      end
-
-      if other.to_sql != to_sql
-        <<-SQL.gsub(/^ {8}/, '')
-        #{drop}
-        #{to_sql}
-        SQL
-      end
-    end
-
-    def downgrade(other)
-      return drop if other.nil?
+    def migrate_to(other)
 
       if other.identify != identify
         fail 'Not the Same Objects!'

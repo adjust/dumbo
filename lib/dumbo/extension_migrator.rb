@@ -44,18 +44,28 @@ module Dumbo
 
     def object_diff(type, dir)
       ids = @old_version.public_send(type).map(&:identify) | @new_version.public_send(type).map(&:identify)
-
       sqls = ids.map do |id|
-        n = @new_version.public_send(type).find { |n| n.identify == id }
-        o = @old_version.public_send(type).find { |n| n.identify == id }
-        if n
-          n.public_send(dir, o)
-        elsif o
-          o.public_send(dir, o)
+        new_version_obj = @new_version.public_send(type).find { |n| n.identify == id }
+        old_version_obj = @old_version.public_send(type).find { |n| n.identify == id }
+        case dir
+        when :upgrade
+          migrate(old_version_obj, new_version_obj)
+        when :downgrade
+          migrate(new_version_obj, old_version_obj)
         end
       end
 
       sqls.join("\n----\n")
+    end
+
+    def migrate(from, to)
+      if from && to
+        from.migrate_to(to)
+      elsif from
+        from.drop
+      elsif to
+        to.to_sql
+      end
     end
 
     private

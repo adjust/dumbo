@@ -20,27 +20,7 @@ module Dumbo
       "DROP FUNCTION #{name}(#{arg_types});"
     end
 
-    def upgrade(other)
-      return to_sql if other.nil?
-
-      if other.identify != identify
-        fail 'Not the Same Objects!'
-      end
-
-      return nil if other.to_sql == to_sql
-
-      if other.result_type != result_type
-        <<-SQL.gsub(/^ {8}/, '')
-        #{drop}
-        #{to_sql}
-        SQL
-      else
-        to_sql
-      end
-    end
-
-    def downgrade(other)
-      return drop if other.nil?
+    def migrate_to(other)
 
       if other.identify != identify
         fail 'Not the Same Objects!'
@@ -95,7 +75,7 @@ module Dumbo
     end
 
     def to_sql
-      definition.gsub("public.#{name}", name) + ';'
+      definition.gsub("public.#{name}", name).strip + ';'
     end
   end
 end

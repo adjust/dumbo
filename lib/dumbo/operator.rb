@@ -53,10 +53,10 @@ module Dumbo
         mem << "#{attr.to_s.upcase} = #{public_send(attr)}" if public_send(attr)
         mem
       end
-      atttr_str = attrs.join(",\n  ")
-      attrs << ",\n  HASHES" if hashes
-      attrs << ",\n  MERGES" if merges
 
+      attrs << "HASHES" if hashes == 't'
+      attrs << "MERGES" if merges == 't'
+      atttr_str = attrs.join(",\n  ")
       <<-SQL.gsub(/^ {6}/, '')
       CREATE OPERATOR #{name} (
         PROCEDURE = #{function_name},
@@ -66,7 +66,7 @@ module Dumbo
     end
 
     def drop
-      "DROP OPERATOR #{name};"
+      "DROP OPERATOR #{name} (#{leftarg}, #{rightarg});"
     end
   end
 end

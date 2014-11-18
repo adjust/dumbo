@@ -32,13 +32,8 @@ module Dumbo
           ActiveRecord::Base.connection.drop_database @config['database']
         end
 
-        namespace :test do
-          task :environment do
-            ENV['DUMBO_ENV'] = 'test'
-            ActiveRecord::Schema.verbose = false
-          end
-
-          task load_structure: :environment do
+        desc 'load db structure from db/structure.sql or DB_STRUCTURE environment variable'
+        task load_structure: :environment do
             filename = ENV['DB_STRUCTURE'] || File.join('db', 'structure.sql')
             if File.exists?(filename)
               ActiveRecord::Tasks::DatabaseTasks.structure_load(@config, filename)
@@ -46,6 +41,14 @@ module Dumbo
               puts "File not found skip"
             end
           end
+
+        namespace :test do
+          task :environment do
+            ENV['DUMBO_ENV'] = 'test'
+            ActiveRecord::Schema.verbose = false
+          end
+
+          task load_structure: [:environment, 'db:load_structure']
 
           desc 'Re-create and prepare test database'
           task prepare: [:environment, :drop, :create]

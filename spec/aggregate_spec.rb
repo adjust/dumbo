@@ -32,7 +32,7 @@ describe Dumbo::Aggregate do
       CREATE AGGREGATE min(integer) (
         SFUNC = int4smaller,
         STYPE = int4,
-        SORTOP = <
+        SORTOP = "<"
       );
       SQL
   end
