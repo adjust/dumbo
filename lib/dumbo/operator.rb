@@ -66,7 +66,7 @@ module Dumbo
     end
 
     def drop
-      "DROP OPERATOR #{name} (#{leftarg}, #{rightarg});"
+      "DROP OPERATOR IF EXISTS #{name} (#{leftarg}, #{rightarg});"
     end
   end
 end

@@ -54,7 +54,7 @@ module Dumbo
     end
 
     def drop
-      "DROP AGGREGATE #{name} (#{input_data_type});"
+      "DROP AGGREGATE IF EXISTS #{name} (#{input_data_type});"
     end
   end
 end

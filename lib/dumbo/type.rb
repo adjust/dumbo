@@ -24,7 +24,7 @@ module Dumbo
     end
 
     def drop
-      "DROP TYPE #{name};"
+      "DROP TYPE IF EXISTS #{name};"
     end
   end
 end
