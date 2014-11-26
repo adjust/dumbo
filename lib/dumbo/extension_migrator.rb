@@ -28,7 +28,7 @@ module Dumbo
     end
 
     def downgrade
-      TYPES.map do |type|
+      TYPES.reverse.map do |type|
         diff = object_diff(type, :downgrade)
         "----#{type}----\n" + diff if diff.present?
       end.compact.join("\n")
@@ -55,7 +55,7 @@ module Dumbo
         end
       end
 
-      sqls.join("\n----\n")
+      sqls.compact.join("\n----\n")
     end
 
     def migrate(from, to)

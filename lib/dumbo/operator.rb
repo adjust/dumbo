@@ -50,7 +50,7 @@ module Dumbo
 
     def to_sql
       attrs = [:leftarg, :rightarg, :commutator, :negator, :restrict, :join].reduce([]) do |mem, attr|
-        mem << "#{attr.to_s.upcase} = #{public_send(attr)}" if public_send(attr)
+        mem << "#{attr.to_s.upcase} = #{public_send(attr)}" if public_send(attr) &&  public_send(attr) !='-'
         mem
       end
 
