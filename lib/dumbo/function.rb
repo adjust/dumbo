@@ -43,7 +43,8 @@ module Dumbo
         SELECT
           p.proname as name,
           pg_catalog.pg_get_function_result(p.oid) as result_type,
-          pg_catalog.pg_get_function_arguments(p.oid) as arg_types,
+          pg_catalog.pg_get_function_arguments(p.oid) as args,
+          pg_catalog.pg_get_function_identity_arguments(p.oid) as arg_types,
           CASE
             WHEN p.proisagg THEN 'agg'
             WHEN p.proiswindow THEN 'window'
