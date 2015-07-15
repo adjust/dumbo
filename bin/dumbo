@@ -28,6 +28,19 @@ module Cli
       end
       say_status('create', file_name)
     end
+
+    desc 'type <name> [<like>]', 'creates a skeleton for a new base type <name> based on the optional like parm'
+    def type(name, like = nil)
+      mkdir("sql")
+      mkdir("src")
+      template_path = File.expand_path('../../template/types', __FILE__)
+      Dir.glob(File.expand_path('../../template/types/*', __FILE__)).each do |template|
+        eruby = Erubis::Eruby.new(File.read(template))
+        content = eruby.result(get_type_template_bindings(like).merge(typname: name))
+        binding.pry
+        create "#{name}/#{dest_name.sub_ext('')}", content
+      end
+    end
   end
 
   class Dumbo < Thor
@@ -119,6 +132,19 @@ module Cli
               say_status('create', dest)
             end
           end
+        end
+      end
+
+      def get_type_template_bindings(like_type)
+        case like_type
+        when 'char'
+          {macro:'CHAR', sqllike:'char', clike:'char', typdef: 'char' }
+        when 'int2'
+          {macro:'INT16', sqllike:'smallint', clike:'int2', typdef: 'int16' }
+        when 'int4'
+          {macro:'INT32', sqllike:'int', clike:'int4', typdef: 'int32' }
+        when 'int8'
+          {macro:'INT64', sqllike:'bigint', clike:'int8', typdef: 'int64' }
         end
       end
     end
