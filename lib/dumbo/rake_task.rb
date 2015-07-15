@@ -113,6 +113,8 @@ module Dumbo
 
     def concatenate(lines, target)
       File.open(target, 'w') do |f|
+        f.puts "-- complain if script is sourced in psql, rather than via CREATE EXTENSION"
+        f.puts "\\echo Use \"CREATE EXTENSION #{Extension.name}\" to load this file. \\quit"
         lines.each do |line|
           f.puts line unless line =~ DependencyResolver.depends_pattern
         end
