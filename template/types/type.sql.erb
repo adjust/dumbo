@@ -1,137 +1,137 @@
-CREATE FUNCTION <%=typname>_in(cstring)
-RETURNS <%=typname>
-AS '$libdir/<%=typname>'
+CREATE FUNCTION <%=typname%>_in(cstring)
+RETURNS <%=typname%>
+AS '$libdir/<%=extname%>'
 LANGUAGE C IMMUTABLE STRICT;
 
-CREATE FUNCTION <%=typname>_out(<%=typname>)
+CREATE FUNCTION <%=typname%>_out(<%=typname%>)
 RETURNS cstring
-AS '$libdir/<%=typname>'
+AS '$libdir/<%=extname%>'
 LANGUAGE C IMMUTABLE STRICT;
 
-CREATE FUNCTION <%=typname>_recv(internal)
-RETURNS <%=typname>
-AS '$libdir/<%=typname>'
+CREATE FUNCTION <%=typname%>_recv(internal)
+RETURNS <%=typname%>
+AS '$libdir/<%=extname%>'
 LANGUAGE C IMMUTABLE STRICT;
 
-CREATE FUNCTION <%=typname>_send(<%=typname>)
+CREATE FUNCTION <%=typname%>_send(<%=typname%>)
 RETURNS bytea
-AS '$libdir/<%=typname>'
+AS '$libdir/<%=extname%>'
 LANGUAGE C IMMUTABLE STRICT;
 
-CREATE TYPE <%=typname> (
-	INPUT          = <%=typname>_in,
-	OUTPUT         = <%=typname>_out,
-	RECEIVE        = <%=typname>_recv,
-	SEND           = <%=typname>_send,
-	LIKE           = <%=sqllike>,
+CREATE TYPE <%=typname%> (
+	INPUT          = <%=typname%>_in,
+	OUTPUT         = <%=typname%>_out,
+	RECEIVE        = <%=typname%>_recv,
+	SEND           = <%=typname%>_send,
+	LIKE           = <%=sqllike%>,
 	CATEGORY       = 'N'
 );
-COMMENT ON TYPE <%=typname> IS 'a <%=typname> internaly stored as <%=sqllike>';
+COMMENT ON TYPE <%=typname%> IS 'a <%=typname%> internaly stored as <%=sqllike%>';
 
-CREATE CAST (<%=sqllike> as <%=typname>) WITHOUT FUNCTION AS IMPLICIT;
-CREATE CAST (<%=typname> as <%=sqllike>) WITHOUT FUNCTION AS IMPLICIT;
+CREATE CAST (<%=sqllike%> as <%=typname%>) WITHOUT FUNCTION AS IMPLICIT;
+CREATE CAST (<%=typname%> as <%=sqllike%>) WITHOUT FUNCTION AS IMPLICIT;
 
-CREATE FUNCTION <%=typname>_eq(<%=typname>, <%=typname>)
-RETURNS boolean LANGUAGE internal IMMUTABLE AS '<%=clike>eq';
+CREATE FUNCTION <%=typname%>_eq(<%=typname%>, <%=typname%>)
+RETURNS boolean LANGUAGE internal IMMUTABLE AS '<%=clike%>eq';
 
-CREATE FUNCTION <%=typname>_ne(<%=typname>, <%=typname>)
-RETURNS boolean LANGUAGE internal IMMUTABLE AS '<%=clike>ne';
+CREATE FUNCTION <%=typname%>_ne(<%=typname%>, <%=typname%>)
+RETURNS boolean LANGUAGE internal IMMUTABLE AS '<%=clike%>ne';
 
-CREATE FUNCTION <%=typname>_lt(<%=typname>, <%=typname>)
-RETURNS boolean LANGUAGE internal IMMUTABLE AS '<%=clike>lt';
+CREATE FUNCTION <%=typname%>_lt(<%=typname%>, <%=typname%>)
+RETURNS boolean LANGUAGE internal IMMUTABLE AS '<%=clike%>lt';
 
-CREATE FUNCTION <%=typname>_le(<%=typname>, <%=typname>)
-RETURNS boolean LANGUAGE internal IMMUTABLE AS '<%=clike>le';
+CREATE FUNCTION <%=typname%>_le(<%=typname%>, <%=typname%>)
+RETURNS boolean LANGUAGE internal IMMUTABLE AS '<%=clike%>le';
 
-CREATE FUNCTION <%=typname>_gt(<%=typname>, <%=typname>)
-RETURNS boolean LANGUAGE internal IMMUTABLE AS '<%=clike>gt';
+CREATE FUNCTION <%=typname%>_gt(<%=typname%>, <%=typname%>)
+RETURNS boolean LANGUAGE internal IMMUTABLE AS '<%=clike%>gt';
 
-CREATE FUNCTION <%=typname>_ge(<%=typname>, <%=typname>)
-RETURNS boolean LANGUAGE internal IMMUTABLE AS '<%=clike>ge';
+CREATE FUNCTION <%=typname%>_ge(<%=typname%>, <%=typname%>)
+RETURNS boolean LANGUAGE internal IMMUTABLE AS '<%=clike%>ge';
 
-CREATE FUNCTION <%=typname>_cmp(<%=typname>, <%=typname>)
-RETURNS integer LANGUAGE internal IMMUTABLE AS 'bt<%=clike>cmp';
+CREATE FUNCTION <%=typname%>_cmp(<%=typname%>, <%=typname%>)
+RETURNS integer LANGUAGE internal IMMUTABLE AS 'bt<%=clike%>cmp';
 
-CREATE FUNCTION hash_<%=typname>(<%=typname>)
-RETURNS integer LANGUAGE internal IMMUTABLE AS 'hash<%=clike>';
+CREATE FUNCTION hash_<%=typname%>(<%=typname%>)
+RETURNS integer LANGUAGE internal IMMUTABLE AS 'hash<%=clike%>';
 
 CREATE OPERATOR = (
-	LEFTARG = <%=typname>,
-	RIGHTARG = <%=typname>,
-	PROCEDURE = <%=typname>_eq,
+	LEFTARG = <%=typname%>,
+	RIGHTARG = <%=typname%>,
+	PROCEDURE = <%=typname%>_eq,
 	COMMUTATOR = '=',
 	NEGATOR = '<>',
 	RESTRICT = eqsel,
 	JOIN = eqjoinsel
 );
-COMMENT ON OPERATOR =(<%=typname>, <%=typname>) IS 'equals?';
+COMMENT ON OPERATOR =(<%=typname%>, <%=typname%>) IS 'equals?';
 
 CREATE OPERATOR <> (
-	LEFTARG = <%=typname>,
-	RIGHTARG = <%=typname>,
-	PROCEDURE = <%=typname>_ne,
+	LEFTARG = <%=typname%>,
+	RIGHTARG = <%=typname%>,
+	PROCEDURE = <%=typname%>_ne,
 	COMMUTATOR = '<>',
 	NEGATOR = '=',
 	RESTRICT = neqsel,
 	JOIN = neqjoinsel
 );
-COMMENT ON OPERATOR <>(<%=typname>, <%=typname>) IS 'not equals?';
+COMMENT ON OPERATOR <>(<%=typname%>, <%=typname%>) IS 'not equals?';
 
 CREATE OPERATOR < (
-	LEFTARG = <%=typname>,
-	RIGHTARG = <%=typname>,
-	PROCEDURE = <%=typname>_lt,
+	LEFTARG = <%=typname%>,
+	RIGHTARG = <%=typname%>,
+	PROCEDURE = <%=typname%>_lt,
 	COMMUTATOR = > ,
 	NEGATOR = >= ,
    	RESTRICT = scalarltsel,
 	JOIN = scalarltjoinsel
 );
-COMMENT ON OPERATOR <(<%=typname>, <%=typname>) IS 'less-than';
+COMMENT ON OPERATOR <(<%=typname%>, <%=typname%>) IS 'less-than';
 
 CREATE OPERATOR <= (
-	LEFTARG = <%=typname>,
-	RIGHTARG = <%=typname>,
-	PROCEDURE = <%=typname>_le,
+	LEFTARG = <%=typname%>,
+	RIGHTARG = <%=typname%>,
+	PROCEDURE = <%=typname%>_le,
 	COMMUTATOR = >= ,
 	NEGATOR = > ,
    	RESTRICT = scalarltsel,
 	JOIN = scalarltjoinsel
 );
-COMMENT ON OPERATOR <=(<%=typname>, <%=typname>) IS 'less-than-or-equal';
+COMMENT ON OPERATOR <=(<%=typname%>, <%=typname%>) IS 'less-than-or-equal';
 
 CREATE OPERATOR > (
-	LEFTARG = <%=typname>,
-	RIGHTARG = <%=typname>,
-	PROCEDURE = <%=typname>_gt,
+	LEFTARG = <%=typname%>,
+	RIGHTARG = <%=typname%>,
+	PROCEDURE = <%=typname%>_gt,
 	COMMUTATOR = < ,
 	NEGATOR = <= ,
    	RESTRICT = scalargtsel,
 	JOIN = scalargtjoinsel
 );
-COMMENT ON OPERATOR >(<%=typname>, <%=typname>) IS 'greater-than';
+COMMENT ON OPERATOR >(<%=typname%>, <%=typname%>) IS 'greater-than';
 
 CREATE OPERATOR >= (
-	LEFTARG = <%=typname>,
-	RIGHTARG = <%=typname>,
-	PROCEDURE = <%=typname>_ge,
+	LEFTARG = <%=typname%>,
+	RIGHTARG = <%=typname%>,
+	PROCEDURE = <%=typname%>_ge,
 	COMMUTATOR = <= ,
 	NEGATOR = < ,
    	RESTRICT = scalargtsel,
 	JOIN = scalargtjoinsel
 );
-COMMENT ON OPERATOR >=(<%=typname>, <%=typname>) IS 'greater-than-or-equal';
+COMMENT ON OPERATOR >=(<%=typname%>, <%=typname%>) IS 'greater-than-or-equal';
 
-CREATE OPERATOR CLASS btree_<%=typname>_ops
-DEFAULT FOR TYPE <%=typname> USING btree
+CREATE OPERATOR CLASS btree_<%=typname%>_ops
+DEFAULT FOR TYPE <%=typname%> USING btree
 AS
         OPERATOR        1       <  ,
         OPERATOR        2       <= ,
         OPERATOR        3       =  ,
         OPERATOR        4       >= ,
         OPERATOR        5       >  ,
-        FUNCTION        1       <%=typname>_cmp(<%=typname>, <%=typname>);
+        FUNCTION        1       <%=typname%>_cmp(<%=typname%>, <%=typname%>);
 
-CREATE OPERATOR CLASS hash_<%=typname>_ops
-    DEFAULT FOR TYPE <%=typname> USING hash AS
+CREATE OPERATOR CLASS hash_<%=typname%>_ops
+    DEFAULT FOR TYPE <%=typname%> USING hash AS
         OPERATOR        1       = ,
-        FUNCTION        1       hash_<%=typname>(<%=typname>);
+        FUNCTION        1       hash_<%=typname%>(<%=typname%>);

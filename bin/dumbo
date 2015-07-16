@@ -4,8 +4,53 @@ require 'thor/group'
 require 'erubis'
 require 'fileutils'
 require 'pathname'
+require 'pry'
+require 'dumbo'
 
 module Cli
+  module Helper
+    def mkdir(path, silent_skip = false)
+      if File.directory?(path)
+        say_status('skip', "#{path}", :yellow) unless silent_skip
+      else
+        FileUtils.mkdir_p(path)
+        say_status('create', "#{path}")
+      end
+    end
+
+    def create(path, content, silent_skip = false)
+      if File.exist? path
+        say_status('exists', path, :yellow) unless silent_skip
+      else
+        File.open(path, 'w') do |f|
+          f.puts content
+        end
+        say_status('create', path)
+      end
+    end
+
+    def cp(src, dest, silent_skip = false)
+      Array(src).each do |p|
+        path = Pathname.new(p)
+        if File.directory?(dest)
+          if File.exist?("#{dest}/#{path.basename}")
+            say_status('skip', "#{dest}/#{path.basename}", :yellow) unless silent_skip
+          else
+            FileUtils.cp_r p, dest
+            say_status('create', "#{dest}/#{path.basename}")
+          end
+        else
+          if File.exist?(dest)
+            say_status('skip', dest, :yellow) unless silent_skip
+          else
+            FileUtils.cp_r p, dest
+            say_status('create', dest)
+          end
+        end
+      end
+    end
+  end
+
   class Generate < Thor
     desc 'spec <name>', 'Add a new spec file named <name> as spec/<name>_spec.rb'
     def spec(name)
@@ -36,9 +81,31 @@ module Cli
       template_path = File.expand_path('../../template/types', __FILE__)
       Dir.glob(File.expand_path('../../template/types/*', __FILE__)).each do |template|
         eruby = Erubis::Eruby.new(File.read(template))
-        content = eruby.result(get_type_template_bindings(like).merge(typname: name))
-        binding.pry
-        create "#{name}/#{dest_name.sub_ext('')}", content
+        content = eruby.result(get_type_template_bindings(like).merge(typname: name, extname: ::Dumbo::Extension.name))
+        dest = case ext = Pathname.new(template).basename.sub_ext('').extname
+        when '.c', '.h'
+          "src/#{name}#{ext}"
+        when '.sql'
+          "sql/#{name}#{ext}"
+        end
+
+        create dest, content
+      end
+    end
+
+    no_commands do
+      include Helper
+      def get_type_template_bindings(like_type)
+        case like_type
+        when 'char'
+          {macro:'CHAR', sqllike:'char', clike:'char', typdef: 'char' }
+        when 'int2'
+          {macro:'INT16', sqllike:'smallint', clike:'int2', typdef: 'int16' }
+        when 'int4'
+          {macro:'INT32', sqllike:'int', clike:'int4', typdef: 'int32' }
+        when 'int8'
+          {macro:'INT64', sqllike:'bigint', clike:'int8', typdef: 'int64' }
+        end
       end
     end
   end
@@ -91,62 +158,8 @@ module Cli
     desc "g GENERATOR args", "generates files for the given generator"
     subcommand "g", Generate
 
-
-
     no_commands do
-      def mkdir(path, silent_skip = false)
-        if File.directory?(path)
-          say_status('skip', "#{path}", :yellow) unless silent_skip
-        else
-          FileUtils.mkdir_p(path)
-          say_status('create', "#{path}")
-        end
-      end
-
-      def create(path, content, silent_skip = false)
-        if File.exist? path
-          say_status('skip', path, :yellow) unless silent_skip
-        else
-          File.open(path, 'w') do |f|
-            f.puts content
-          end
-          say_status('create', path)
-        end
-      end
-
-      def cp(src, dest, silent_skip = false)
-        Array(src).each do |p|
-          path = Pathname.new(p)
-          if File.directory?(dest)
-            if File.exist?("#{dest}/#{path.basename}")
-              say_status('skip', "#{dest}/#{path.basename}", :yellow) unless silent_skip
-            else
-              FileUtils.cp_r p, dest
-              say_status('create', "#{dest}/#{path.basename}")
-            end
-          else
-            if File.exist?(dest)
-              say_status('skip', dest, :yellow) unless silent_skip
-            else
-              FileUtils.cp_r p, dest
-              say_status('create', dest)
-            end
-          end
-        end
-      end
-
-      def get_type_template_bindings(like_type)
-        case like_type
-        when 'char'
-          {macro:'CHAR', sqllike:'char', clike:'char', typdef: 'char' }
-        when 'int2'
-          {macro:'INT16', sqllike:'smallint', clike:'int2', typdef: 'int16' }
-        when 'int4'
-          {macro:'INT32', sqllike:'int', clike:'int4', typdef: 'int32' }
-        when 'int8'
-          {macro:'INT64', sqllike:'bigint', clike:'int8', typdef: 'int64' }
-        end
-      end
+      include Helper
     end
   end
 end

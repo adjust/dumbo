@@ -1,12 +1,15 @@
-#ifndef <%=typname.upcase>_H
-#define <%=typname.upcase>_H
+#ifndef <%=typname.upcase%>_H
+#define <%=typname.upcase%>_H
 
 #include "postgres.h"
+#include "fmgr.h"
+#include "libpq/pqformat.h"
 
-typedef <%=typdef%> <%=typname>;
 
-Datum <%=typname>_in(PG_FUNCTION_ARGS);
-Datum <%=typname>_out(PG_FUNCTION_ARGS);
-Datum <%=typname>_recv(PG_FUNCTION_ARGS);
-Datum <%=typname>_send(PG_FUNCTION_ARGS);
-#endif // <%=typname.upcase>_H
+typedef <%=typdef%> <%=typname%>;
+
+Datum <%=typname%>_in(PG_FUNCTION_ARGS);
+Datum <%=typname%>_out(PG_FUNCTION_ARGS);
+Datum <%=typname%>_recv(PG_FUNCTION_ARGS);
+Datum <%=typname%>_send(PG_FUNCTION_ARGS);
+#endif // <%=typname.upcase%>_H
