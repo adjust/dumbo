@@ -23,7 +23,7 @@ CREATE TYPE <%=typname%> (
 	OUTPUT         = <%=typname%>_out,
 	RECEIVE        = <%=typname%>_recv,
 	SEND           = <%=typname%>_send,
-	LIKE           = <%=sqllike%>,
+	LIKE           = "<%=sqllike%>",
 	CATEGORY       = 'N'
 );
 COMMENT ON TYPE <%=typname%> IS 'a <%=typname%> internaly stored as <%=sqllike%>';

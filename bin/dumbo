@@ -97,14 +97,16 @@ module Cli
       include Helper
       def get_type_template_bindings(like_type)
         case like_type
-        when 'char'
+        when 'char', 'int8'
           {macro:'CHAR', sqllike:'char', clike:'char', typdef: 'char' }
-        when 'int2'
+        when 'int2', 'smallint', 'int16'
           {macro:'INT16', sqllike:'smallint', clike:'int2', typdef: 'int16' }
-        when 'int4'
+        when 'int4', 'integer', 'int', 'int32'
           {macro:'INT32', sqllike:'int', clike:'int4', typdef: 'int32' }
-        when 'int8'
+        when 'int8', 'int64', 'bigint'
           {macro:'INT64', sqllike:'bigint', clike:'int8', typdef: 'int64' }
+        else
+          raise "unsupported  'like type' #{like_type} supported types are 'char', 'int2', 'int4' and 'int8'"
         end
       end
     end

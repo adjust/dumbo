@@ -35,11 +35,11 @@ module Dumbo
         end
 
         desc 'concatenates files'
-        file Extension.file_name => file_list do |t|
+        task Extension.file_name => file_list do |t|
           sql = t.prerequisites.map do |file|
             ["--source file #{file}"] + get_sql(file) + [' ']
           end.flatten
-          concatenate sql, t.name
+          concatenate sql, Extension.file_name
         end
 
         desc 'prepare source files'
