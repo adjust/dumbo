@@ -6,7 +6,7 @@ describe Dumbo::Operator do
   end
 
   it 'should have a sql representation' do
-    expect(operator.to_sql).to eq <<-SQL.gsub(/^ {4}/, '')
+    exp =  <<-SQL.gsub(/^ {4}/, '')
     CREATE OPERATOR && (
       PROCEDURE = box_overlap,
       LEFTARG = box,
@@ -16,13 +16,15 @@ describe Dumbo::Operator do
       JOIN = areajoinsel
     );
     SQL
+
+    assert_equal exp, operator.to_sql
   end
 
   it 'should have a uniq identfier' do
-    expect(operator.identify).to eq ['&&', 'box', 'box']
+    assert_equal ['&&', 'box', 'box'], operator.identify
   end
 
   it 'should have drop sql' do
-    expect(operator.drop).to eq 'DROP OPERATOR && (box, box);'
+    assert_equal 'DROP OPERATOR IF EXISTS && (box, box);', operator.drop
   end
 end

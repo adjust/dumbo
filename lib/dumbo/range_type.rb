@@ -2,6 +2,7 @@ module Dumbo
   class RangeType < Type
     attr_accessor :subtype, :subtype_opclass, :collation,
                   :canonical, :subtype_diff
+    identfied_by :name
 
     def load_attributes
       super

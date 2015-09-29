@@ -13,6 +13,7 @@ module Dumbo
                   :internallength,
                   :attribute_name,
                   :typrelid
+    identfied_by :name
 
     def load_attributes
       sql = <<-SQL

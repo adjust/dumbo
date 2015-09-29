@@ -1,11 +1,10 @@
-require 'active_support/core_ext/class/attribute'
-
 module Dumbo
   class PgObject
     attr_reader :oid
-    class_attribute :identifier
 
     class << self
+      attr_accessor :identifier
+
       def identfied_by(*args)
         self.identifier = args
       end
@@ -17,7 +16,7 @@ module Dumbo
     end
 
     def identify
-      identifier.map { |a| public_send a }
+      self.class.identifier.map { |a| public_send a }
     end
 
     def get(type = nil)
@@ -54,7 +53,7 @@ module Dumbo
     end
 
     def execute(sql)
-      ActiveRecord::Base.connection.execute(sql)
+      Dumbo.connection.exec(sql)
     end
   end
 end

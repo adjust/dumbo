@@ -4,11 +4,8 @@ require 'erubis'
 require 'pathname'
 require 'yaml'
 require 'logger'
-require 'active_record'
 require 'dumbo/extension'
 require 'dumbo/dependency_resolver'
-require 'rspec/core'
-require 'dumbo/db_task'
 
 module Dumbo
   class RakeTask < ::Rake::TaskLib
@@ -18,8 +15,6 @@ module Dumbo
       @name = name
 
       namespace name do
-        Dumbo::DbTask.new(:db)
-
         desc 'creates and installs extension'
         task all: [:src, Extension.file_name, :install]
 

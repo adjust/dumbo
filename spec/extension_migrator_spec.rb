@@ -1,16 +1,19 @@
 require 'spec_helper'
 
 describe Dumbo::ExtensionMigrator do
-  around(:each) do |example|
-    install_testing_extension
-    example.run
+  after(:each) do |example|
     uninstall_testing_extension
   end
+
+  before(:each) do |example|
+    install_testing_extension
+  end
+
 
   let(:migrator) { Dumbo::ExtensionMigrator.new('dumbo_sample', '0.0.1', '0.0.2') }
 
   it 'should provide upgrade sql' do
-    expect(migrator.upgrade).to eq <<-SQL.gsub(/^ {4}/, '').strip
+    exp = <<-SQL.gsub(/^ {4}/, '').strip
     ----functions----
     CREATE OR REPLACE FUNCTION foo(integer)
      RETURNS integer
@@ -22,10 +25,12 @@ describe Dumbo::ExtensionMigrator do
     END
     $function$;
     SQL
+
+    assert_equal exp, migrator.upgrade
   end
 
   it 'should provide downgrade sql' do
-    expect(migrator.downgrade).to eq <<-SQL.gsub(/^ {4}/, '').strip
+    exp = <<-SQL.gsub(/^ {4}/, '').strip
     ----functions----
     CREATE OR REPLACE FUNCTION foo(integer)
      RETURNS integer
@@ -37,5 +42,7 @@ describe Dumbo::ExtensionMigrator do
     END
     $function$;
     SQL
+
+    assert_equal exp, migrator.downgrade
   end
 end

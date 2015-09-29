@@ -115,7 +115,7 @@ module Dumbo
     private
 
     def execute(sql)
-      ActiveRecord::Base.connection.execute sql
+      Dumbo.connection.exec sql
     end
   end
 end

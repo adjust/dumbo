@@ -1,6 +1,7 @@
 module Dumbo
   class EnumType < Type
     attr_accessor :labels
+    identfied_by :name
 
     def load_attributes
       super

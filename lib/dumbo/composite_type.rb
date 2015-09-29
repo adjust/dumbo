@@ -1,6 +1,7 @@
 module Dumbo
   class CompositeType < Type
     attr_accessor :attributes
+    identfied_by :name
 
     def load_attributes
       super

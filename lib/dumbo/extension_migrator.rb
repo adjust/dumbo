@@ -23,14 +23,14 @@ module Dumbo
     def upgrade
       TYPES.map do |type|
         diff = object_diff(type, :upgrade)
-        "----#{type}----\n" + diff if diff.present?
+        "----#{type}----\n" + diff unless diff.empty?
       end.compact.join("\n")
     end
 
     def downgrade
       TYPES.reverse.map do |type|
         diff = object_diff(type, :downgrade)
-        "----#{type}----\n" + diff if diff.present?
+        "----#{type}----\n" + diff unless diff.empty?
       end.compact.join("\n")
     end
 
@@ -70,7 +70,7 @@ module Dumbo
 
     private
     def execute(sql)
-      ActiveRecord::Base.connection.execute sql
+      Dumbo.connection.exec sql
     end
   end
 end

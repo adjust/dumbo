@@ -11,7 +11,7 @@ describe Dumbo::Cast do
   end
 
   it 'should have a sql representation' do
-      expect(cast.to_sql).to eq <<-SQL.gsub(/^ {6}/, '')
+      cast.to_sql.must_equal <<-SQL.gsub(/^ {6}/, '')
       CREATE CAST (bigint AS integer)
       WITH FUNCTION int4(bigint)
       AS ASSIGNMENT;

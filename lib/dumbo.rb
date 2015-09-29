@@ -1,4 +1,3 @@
-require 'active_record'
 require 'dumbo/version'
 require 'dumbo/pg_object'
 require 'dumbo/type'
@@ -14,7 +13,7 @@ require 'dumbo/extension_migrator'
 require 'dumbo/extension_version'
 require 'dumbo/operator'
 require 'dumbo/range_type'
-require 'dumbo/version'
+require 'dumbo/configuration'
 require 'dumbo/binding_loader'
 
 module Dumbo

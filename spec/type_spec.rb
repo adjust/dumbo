@@ -1,10 +1,12 @@
 require 'spec_helper'
 
 describe Dumbo::Type do
-  around(:each) do |example|
+  before(:each) do |example|
     install_testing_extension
     extension.create
-    example.run
+  end
+
+  after(:each) do |example|
     uninstall_testing_extension
   end
 
@@ -17,12 +19,6 @@ describe Dumbo::Type do
     Dumbo::Type.new(oid).get
   end
 
-  shared_examples_for 'identifiable' do
-    subject { type.identify }
-
-    it { should eq [type_name] }
-  end
-
   describe 'Base Type' do
     let(:version) { '0.0.4' }
 
@@ -31,7 +27,7 @@ describe Dumbo::Type do
     let(:type) { extension.types.select { |t| t.name == type_name }.first }
 
     it 'should have a sql representation' do
-      expect(type.to_sql).to eq <<-SQL.gsub(/^ {6}/, '')
+      exp = <<-SQL.gsub(/^ {6}/, '')
       CREATE TYPE elephant_base(
         INPUT=elephant_in,
         OUTPUT=elephant_out,
@@ -45,55 +41,71 @@ describe Dumbo::Type do
         STORAGE=PLAIN
       );
       SQL
+
+      assert_equal exp, type.to_sql
     end
 
-    it_should_behave_like 'identifiable'
+    it 'should be identifiable' do
+      assert_equal [type_name], type.identify
+    end
   end
 
   describe 'Composite Type' do
     let(:type_name) { 'elephant_composite' }
 
     it 'should have a sql representation' do
-      expect(type.to_sql).to eq <<-SQL.gsub(/^ {6}/, '')
+      exp = <<-SQL.gsub(/^ {6}/, '')
       CREATE TYPE elephant_composite AS (
         weight integer,
         name text
       );
       SQL
+
+      assert_equal exp, type.to_sql
     end
 
-    it_should_behave_like 'identifiable'
+    it 'should be identifiable' do
+      assert_equal [type_name], type.identify
+    end
   end
 
   describe 'Range Type' do
     let(:type_name) { 'elephant_range' }
 
     it 'should have a sql representation' do
-      expect(type.to_sql).to eq <<-SQL.gsub(/^ {6}/, '')
+      exp = <<-SQL.gsub(/^ {6}/, '')
       CREATE TYPE elephant_range AS RANGE (
         SUBTYPE=float8,
         SUBTYPE_OPCLASS=float8_ops,
         SUBTYPE_DIFF=float8mi
       );
       SQL
+
+      assert_equal exp, type.to_sql
     end
 
-    it_should_behave_like 'identifiable'
+    it 'should be identifiable' do
+      assert_equal [type_name], type.identify
+    end
   end
 
   describe 'Enum Type' do
     let(:type_name) { 'elephant_enum' }
 
     it 'should have a sql representation' do
-      expect(type.to_sql).to eq <<-SQL.gsub(/^ {6}/, '')
+      exp = <<-SQL.gsub(/^ {6}/, '')
       CREATE TYPE elephant_enum AS ENUM (
         'infant',
         'child',
         'adult'
       );
       SQL
+
+      assert_equal exp, type.to_sql
     end
 
-    it_should_behave_like 'identifiable'
+    it 'should be identifiable' do
+      assert_equal [type_name], type.identify
+    end
   end
 end

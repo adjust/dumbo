@@ -19,12 +19,10 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "rake"
   spec.add_dependency 'erubis'
-  spec.add_dependency 'rspec', '~> 3.0.0'
-  spec.add_dependency 'activerecord'
   spec.add_dependency 'pg', '> 0.17'
 
   spec.add_dependency 'thor'
-  spec.add_dependency 'activesupport'
+  spec.add_dependency 'pg_spec'
 
   spec.add_dependency "bundler", "~> 1.5"
 end
