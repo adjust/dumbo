@@ -1,6 +1,6 @@
 module Dumbo
   class Configuration
-    attr_accessor :dbname, :user, :host, :port
+    attr_accessor :dbname, :user, :host, :port, :root
 
     def initialize
       @user, @host, @port = 'postgres', 'localhost', '5432'
@@ -26,9 +26,5 @@ module Dumbo
 
   def self.configure
     yield(configuration)
-  end
-
-  def self.connection
-    configuration.connection
   end
 end

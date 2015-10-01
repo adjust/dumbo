@@ -17,5 +17,12 @@ require 'dumbo/configuration'
 require 'dumbo/binding_loader'
 
 module Dumbo
-  # Your code goes here...
+
+  def self.connection
+    configuration.connection
+  end
+
+  def self.root
+    configuration.root
+  end
 end
