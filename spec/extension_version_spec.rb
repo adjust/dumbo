@@ -15,9 +15,9 @@ describe Dumbo::ExtensionVersion do
   end
 
   describe 'handling incomplete version levels' do
-    let(:version) { Dumbo::ExtensionVersion.new(0, 1) }
+    let(:version) { Dumbo::ExtensionVersion.new(0, 1, 0) }
 
-    it { assert_equal '0.1', version.to_s  }
+    it { assert_equal '0.1.0', version.to_s  }
     it { assert_equal '0.1.1', version.bump(:patch).to_s }
     it { assert_equal '0.2.0', version.bump(:minor).to_s }
   end

@@ -1,9 +1,12 @@
 module Dumbo
   class Configuration
-    attr_accessor :dbname, :user, :host, :port, :root
+    attr_accessor :dbname, :user, :host, :port
 
     def initialize
-      @user, @host, @port = 'postgres', 'localhost', '5432'
+      @dbname = ENV['DUMBO_DB']   || "contrib_regression"
+      @port   = ENV['DUMBO_PORT'] || "5432"
+      @user   = ENV['DUMBO_USER'] || "postgres"
+      @host   = ENV['DUMBO_HOST'] || "localhost"
     end
 
     def connection

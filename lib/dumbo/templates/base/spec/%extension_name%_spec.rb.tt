@@ -1,0 +1,6 @@
+require 'spec_helper'
+describe '<%=extension_name%>' do
+  include PgSpec
+
+  is '1+1','2', 'one plus one should be 2'
+end

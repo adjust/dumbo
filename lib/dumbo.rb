@@ -1,4 +1,6 @@
+require 'pg'
 require 'dumbo/version'
+require 'dumbo/cli'
 require 'dumbo/pg_object'
 require 'dumbo/type'
 require 'dumbo/function'

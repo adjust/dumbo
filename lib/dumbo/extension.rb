@@ -17,6 +17,7 @@ module Dumbo
         content = File.read(control_file)
         new_content = content.gsub(version, new_version)
         File.open(control_file, 'w') { |file| file.puts new_content }
+        @_version = new_version
       end
 
       def file_name

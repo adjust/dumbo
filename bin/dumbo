@@ -1,4 +1,37 @@
 #!/usr/bin/env ruby
+# $:.unshift File.expand_path('..', __FILE__)
+# $:.unshift File.expand_path('../../lib', __FILE__)
+require 'dumbo'
+
+def find_makefile_location # :nodoc:
+  here = Dir.pwd
+  original_dir = here
+  until (fn = File.exist?("Makefile"))
+    Dir.chdir("..")
+    return nil if Dir.pwd == here
+    here = Dir.pwd
+  end
+  here
+ensure
+  Dir.chdir(original_dir) if here != original_dir
+end
+
+conf = if ARGV.include?('new')
+   {}
+   else
+    { destination_root: find_makefile_location }
+  end
+
+ENV['DUMBO_DB']   ||= "contrib_regression"
+ENV['DUMBO_PORT'] ||= "5432"
+ENV['DUMBO_USER'] ||= "postgres"
+ENV['DUMBO_HOST'] ||= "localhost"
+
+Dumbo::Cli.start(ARGV, conf)
+# Dumbo::Cli.start(ARGV)
+
+
+__END__
 require 'thor'
 require 'thor/group'
 require 'erubis'

@@ -11,12 +11,15 @@ module Dumbo
     end
 
     def load
-      load_list.reduce({}) do |result, file|
+      data = load_list.reduce({}) do |result, file|
         yaml = Pathname.new(file).sub_ext('.yml')
         bind = YAML.load_file(yaml)
 
         result.merge(bind)
       end
+      os = OpenStruct.new(data)
+      os.class_eval {attr_reader *data.keys}
+      os.instance_eval { binding }
     end
 
     private

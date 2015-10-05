@@ -36,9 +36,9 @@ describe Dumbo::Extension do
     it 'should find versions' do
       ext = Dumbo::Extension.new
       def ext.releases
-        ['ext--abc.sql', 'ext--0.10.7.sql', 'ext--0.11.0.sql', 'ext--1.0.0.sql', 'ext--0.12.sql', 'ext--0.10.5.sql']
+        ['ext--0.10.7.sql', 'ext--0.11.0.sql', 'ext--1.0.0.sql', 'ext--0.12.0.sql', 'ext--0.10.5.sql']
       end
-      assert_equal ['0.10.5', '0.10.7', '0.11.0', '0.12', '1.0.0'], ext.versions.map(&:to_s)
+      assert_equal ['0.10.5', '0.10.7', '0.11.0', '0.12.0', '1.0.0'], ext.versions.map(&:to_s)
     end
   end
 end

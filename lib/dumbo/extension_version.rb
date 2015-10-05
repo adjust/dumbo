@@ -1,5 +1,6 @@
 module Dumbo
-  class ExtensionVersion < Struct.new(:major, :minor, :patch)
+  class ExtensionVersion
+    attr_reader :major, :minor, :patch
     include Comparable
 
     class << self
@@ -10,6 +11,13 @@ module Dumbo
       def sort
         sort! { |a, b| a <=> b }
       end
+    end
+
+    def initialize(major, minor, patch)
+      if [major, minor, patch].any?{ |v| !v.is_a? Numeric}
+        fail 'please use semantic versioning'
+      end
+      @major, @minor, @patch = major, minor, patch
     end
 
     def <=>(other)
@@ -24,6 +32,10 @@ module Dumbo
 
     def to_s
       to_a.compact.join('.')
+    end
+
+    def to_a
+      [major, minor, patch]
     end
 
     private
