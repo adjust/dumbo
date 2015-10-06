@@ -109,9 +109,9 @@ module Dumbo
     def install
       suc = false
       if options[:sudo]
-        in_root { suc = run('make clean && make && sudo make install') }
+        in_root { suc = run('make clean &> /dev/null && make &> /dev/null && sudo make install &> /dev/null') }
       else
-        in_root { suc = run('make clean && make && make install') }
+        in_root { suc = run('make clean &> /dev/null && make &> /dev/null && make install &> /dev/null') }
       end
       unless suc
         say_status "Error", "make failed with error check output", :red
@@ -121,7 +121,7 @@ module Dumbo
 
     desc 'build', 'build your extension sql file'
     def build
-            in_root do
+      in_root do
         sql = [
           "-- complain if script is sourced in psql, rather than via CREATE EXTENSION",
           "\\echo Use \"CREATE EXTENSION #{Extension.name};\" to load this file. \\quit"

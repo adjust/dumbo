@@ -2,11 +2,11 @@ module Dumbo
   class Extension < Struct.new(:name, :version)
     class << self
       def name
-        @_name ||= File.read(makefile)[/EXTENSION\s*=\s*([^\s]*)/, 1]
+        File.read(makefile)[/EXTENSION\s*=\s*([^\s]*)/, 1]
       end
 
       def version
-        @_version ||= File.read(control_file)[/default_version\s*=\s*'([^']*)'/, 1]
+        File.read(control_file)[/default_version\s*=\s*'([^']*)'/, 1]
       end
 
       def versions
@@ -17,7 +17,7 @@ module Dumbo
         content = File.read(control_file)
         new_content = content.gsub(version, new_version)
         File.open(control_file, 'w') { |file| file.puts new_content }
-        @_version = new_version
+        new_version
       end
 
       def file_name

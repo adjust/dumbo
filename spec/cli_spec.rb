@@ -6,10 +6,13 @@ describe "dumbo new" do
   def setup
     `rm -rf #{ROOT}`
     Dumbo.configure{|c| c.dbname = "foo_test"}
+    ENV['DUMBO_DB'] = "foo_test"
   end
 
   def teardown
     `rm -rf #{ROOT}`
+    Dumbo.configure{|c| c.dbname = ENV['TEST_DB'] || "contrib_regression"}
+    ENV['DUMBO_DB'] = ENV['TEST_DB'] || "contrib_regression"
   end
 
   it 'should generate a skeleton with template c if -t set' do
@@ -27,7 +30,6 @@ describe "dumbo new" do
     b = cli 'build'
     cr = b.split("\n").first.strip
     assert_equal 'create  foo--0.0.1.sql', cr
-
     assert File.exist?("foo/foo--0.0.1.sql")
   end
 
@@ -36,5 +38,12 @@ describe "dumbo new" do
     cli 'bump', 'major'
     assert File.exist?('foo/foo.control')
     assert File.read('foo/foo.control').include?("default_version = '1.0.0'")
+  end
+
+  it 'should create regression tests' do
+    cli 'new', 'foo'
+    assert !File.exist?('foo/test/sample_spec.sql')
+    cli 'regress'
+    assert !File.exist?('foo/test/sample_spec.sql')
   end
 end

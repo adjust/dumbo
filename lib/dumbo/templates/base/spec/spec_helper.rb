@@ -11,6 +11,7 @@ PgSpec.configure do |c|
   #                    )
   c.con = Dumbo.connection
   c.root = File.expand_path('../..',__FILE__)
+  c.logdir = 'log'
   c.before(:suite) do
     c.con.exec "CREATE EXTENSION #{Dumbo::Extension.new.name}"
   end
