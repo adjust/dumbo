@@ -21,8 +21,9 @@ describe "dumbo new" do
   end
 
   it 'should pass the tests by default' do
-    # Dumbo.configure{|c| c.dbname='foo_test'}
-    # cli 'new', 'foo'
-    # cli 'test'
+    Dumbo.configure{|c| c.dbname='foo_test'}
+    cli 'new', 'foo'
+    r = cli 'test'
+    assert_equal '', r
   end
 end

@@ -75,6 +75,7 @@ module Dumbo
       invoke 'install'
       succ = true
       in_root { Rake::Task['test'].invoke rescue succ = false }
+      invoke 'dumbo:db:drop'
       succ
     end
 
