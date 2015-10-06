@@ -84,7 +84,7 @@ module Dumbo
 
     desc 'regress', 'create regession test files'
     def regress
-      self.source_paths << find_makefile_location
+      self.source_paths << self.destination_root if self.destination_root
       succ = invoke 'test'
       if succ
         in_root do

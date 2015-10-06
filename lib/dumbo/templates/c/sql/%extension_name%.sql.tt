@@ -5,7 +5,7 @@
 
 --
 -- This is a example code genereted automaticaly
--- by pgxn-utils.
+-- by dumbo.
 
 -- This is how you define a C function in PostgreSQL.
 CREATE OR REPLACE FUNCTION <%= extension_name %>(text)

@@ -3,13 +3,13 @@ require 'spec_helper'
 
 describe "dumbo new" do
 
-  def setup
+  before do
     `rm -rf #{ROOT}`
     Dumbo.configure{|c| c.dbname = "foo_test"}
     ENV['DUMBO_DB'] = "foo_test"
   end
 
-  def teardown
+  after do
     `rm -rf #{ROOT}`
     Dumbo.configure{|c| c.dbname = ENV['TEST_DB'] || "contrib_regression"}
     ENV['DUMBO_DB'] = ENV['TEST_DB'] || "contrib_regression"
@@ -42,8 +42,8 @@ describe "dumbo new" do
 
   it 'should create regression tests' do
     cli 'new', 'foo'
-    assert !File.exist?('foo/test/sample_spec.sql')
+    assert !File.exist?('foo/test/sql/foo_spec.sql')
     cli 'regress'
-    assert !File.exist?('foo/test/sample_spec.sql')
+    assert File.exist?('foo/test/sql/foo_spec.sql')
   end
 end
