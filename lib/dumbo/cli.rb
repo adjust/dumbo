@@ -22,7 +22,6 @@ module Dumbo
 
     desc 'prepare', 'prepare database'
     def prepare
-      configure
       invoke :drop
       invoke :create
     end
@@ -67,7 +66,6 @@ module Dumbo
 
     desc 'test', 'run test'
     def test
-      configure
       Rake::TestTask.new do |t|
         t.pattern = "spec/*_spec.rb"
         t.libs << 'spec'

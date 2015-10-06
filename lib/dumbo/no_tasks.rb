@@ -34,13 +34,6 @@ module Dumbo
       find_makefile_location
     end
 
-    def configure
-      Dumbo.configure do |d|
-        d.root = root
-        d.dbname = 'dumbo_test'
-      end
-    end
-
     # source sql file list
     def file_list
       DependencyResolver.new(Dir.glob('sql/**/*.{sql,tt}')).resolve

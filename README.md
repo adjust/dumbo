@@ -1,20 +1,10 @@
 # Dumbo
 
-postgres extension with fun
+## What is it?
 
-![](http://img1.wikia.nocookie.net/__cb20091210033559/disney/images/7/76/Dumbo-HQ.JPG)
+Dumbo helps developers to create PostgreSQL extensions.
 
 ## Installation
-
-Add this line to your application's Gemfile:
-
-    gem 'dumbo'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
 
     $ gem install dumbo
 
@@ -28,7 +18,7 @@ where "myextention" is the extension name.
 
 Change directory to myextention to start hacking:
 
-    cd myapp
+    cd myextention
 
 As a stating point take a look at the sample function in
 

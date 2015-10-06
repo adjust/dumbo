@@ -2,7 +2,6 @@ require "minitest/autorun"
 require 'pg_spec'
 require 'dumbo'
 require 'support/extension_helper'
-require File.expand_path '../../config', __FILE__
 
 include ExtensionHelper
 
@@ -27,20 +26,12 @@ def capture(stream)
 end
 
 
-
-def next_extension
-  $counter += 1
-  "extension.#{$counter}"
-end
-
 def cli(*args)
-  capture(:stdout) { Dumbo::Cli.start(args) }
-end
+  conf = if args.include?('new')
+   {}
+   else
+    { destination_root: ROOT }
+  end
 
-def change(extension_name, args=nil)
-  #run_pgxn_utils(:skeleton, "#{extension_name} #{args}")
-end
-
-def run_pgxn_utils(task, args)
-  #system "#{BIN_PATH} #{task.to_s} #{args}"
+  capture(:stdout) { Dumbo::Cli.start(args,conf) }
 end

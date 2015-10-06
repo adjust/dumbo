@@ -1,0 +1,15 @@
+/*
+ * Author: <%= maintainer %>
+ *
+ */
+
+--
+-- This is a example code genereted automaticaly
+-- by dumbo.
+
+CREATE FUNCTION <%= extension_name %>(int) RETURNS int AS $$
+BEGIN
+  RETURN $1;
+END
+$$ LANGUAGE SQL IMMUTABLE STRICT;
+

@@ -23,8 +23,4 @@ module Dumbo
   def self.connection
     configuration.connection
   end
-
-  def self.root
-    configuration.root
-  end
 end

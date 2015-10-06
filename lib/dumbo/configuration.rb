@@ -13,10 +13,14 @@ module Dumbo
       @connection ||= PG.connect(dbconfig)
     end
 
+    def connection_reset
+      @connection.close if @connection
+      @connection = nil
+    end
+
     def dbconfig
       {dbname: dbname, user: user, host: host, port: port}
     end
-
   end
 
   class << self
@@ -29,5 +33,6 @@ module Dumbo
 
   def self.configure
     yield(configuration)
+    configuration.connection_reset
   end
 end
