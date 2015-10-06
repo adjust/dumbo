@@ -11,6 +11,13 @@ def query(sql)
   Dumbo.connection.exec(sql)
 end
 
+Dumbo.configure do |c|
+    c.dbname  =  ENV['TEST_DB'] || "contrib_regression"
+    c.port    =  ENV['PG_PORT'] || "5432"
+    c.user    =  ENV['PG_USER'] || "postgres"
+    c.host    =  ENV['PG_HOST'] || "localhost"
+end
+
 # capture method from https://github.com/wycats/thor/blob/master/spec/spec_helper.rb#L36-47
 def capture(stream)
   begin

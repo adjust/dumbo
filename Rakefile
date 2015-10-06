@@ -22,5 +22,10 @@ task :cleanup do
 end
 
 def config
-  Dumbo.configuration.dbconfig
+ {
+    dbname: ENV['TEST_DB'] || "contrib_regression",
+    port:   ENV['PG_PORT'] || "5432",
+    user:   ENV['PG_USER'] || "postgres",
+    host:   ENV['PG_HOST'] || "localhost",
+  }
 end

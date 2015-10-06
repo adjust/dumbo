@@ -11,13 +11,17 @@ module Dumbo
     desc 'create', 'create database'
     def create
       con = PG.connect config.merge(dbname: nil)
-      con.exec  "CREATE DATABASE #{config[:dbname]}"
+      cmd = "CREATE DATABASE #{config[:dbname]}"
+      con.exec cmd
+      say_status 'sql', cmd
     end
 
     desc 'drop', 'drop database'
     def drop
       con = PG.connect config.merge(dbname: nil)
-      con.exec  "DROP DATABASE IF EXISTS #{config[:dbname]}"
+      cmd = "DROP DATABASE IF EXISTS #{config[:dbname]}"
+      con.exec cmd
+      say_status 'sql', cmd
     end
 
     desc 'prepare', 'prepare database'
@@ -75,7 +79,6 @@ module Dumbo
       invoke 'install'
       succ = true
       in_root { Rake::Task['test'].invoke rescue succ = false }
-      invoke 'dumbo:db:drop'
       succ
     end
 
@@ -151,9 +154,9 @@ module Dumbo
         Extension.version!(v)
       end
 
-      invoke 'build'
-      invoke 'install'
-      invoke 'test'
+      invoke 'build', []
+      invoke 'install', []
+      invoke 'test', []
     end
 
     desc "db", "manage database tasks"

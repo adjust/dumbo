@@ -25,4 +25,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'pg_spec'
 
   spec.add_dependency "bundler", "~> 1.5"
+  spec.add_dependency "pry"
 end
