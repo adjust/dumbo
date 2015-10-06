@@ -94,6 +94,7 @@ module Dumbo
             append_to_file  file, "DROP EXTENSION #{Extension.name};", verbose: false
           end
           run("make installcheck &> /dev/null", verbose: false, capture: true)
+          Dir.mkdir 'test/expected' unless Dir.exist? 'test/expected'
           Dir.glob("results/*_spec.out") do  |file|
             FileUtils.cp file, 'test/expected/'
           end
