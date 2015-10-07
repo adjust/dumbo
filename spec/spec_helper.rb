@@ -12,7 +12,7 @@ def query(sql)
 end
 
 Dumbo.configure do |c|
-    c.dbname  =  ENV['TEST_DB'] || "contrib_regression"
+    c.dbname  =  ENV['TEST_DB'] || "dumbo_test"
     c.port    =  ENV['PG_PORT'] || "5432"
     c.user    =  ENV['PG_USER'] || "postgres"
     c.host    =  ENV['PG_HOST'] || "localhost"

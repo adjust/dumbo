@@ -93,12 +93,13 @@ module Dumbo
             prepend_to_file file, "CREATE EXTENSION #{Extension.name};", verbose: false
             append_to_file  file, "DROP EXTENSION #{Extension.name};", verbose: false
           end
-          run("make installcheck &> /dev/null", verbose: false, capture: true)
+          run("make installcheck &> /dev/null", verbose: false, capture: false)
           Dir.mkdir 'test/expected' unless Dir.exist? 'test/expected'
           Dir.glob("results/*_spec.out") do  |file|
             FileUtils.cp file, 'test/expected/'
           end
-          run("make installcheck")
+          reg_check = run("make installcheck", capture: false)
+          fail Thor::Error,'' unless reg_check
         end
       else
         say_status "\nError", "specs failed fix and rerun", :red
