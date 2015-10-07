@@ -98,8 +98,11 @@ module Dumbo
           Dir.glob("results/*_spec.out") do  |file|
             FileUtils.cp file, 'test/expected/'
           end
-          reg_check = run("make installcheck", capture: false)
-          fail Thor::Error,'' unless reg_check
+          reg_check = run("make installcheck")
+          unless reg_check
+            say_status "ERROR", "make installcheck failed", :red
+            fail Thor::Error,'' unless reg_check
+          end
         end
       else
         say_status "\nError", "specs failed fix and rerun", :red
