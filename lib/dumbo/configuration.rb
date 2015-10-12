@@ -10,7 +10,12 @@ module Dumbo
     end
 
     def connection
-      @connection ||= PG.connect(dbconfig)
+      unless @connection
+        @connection = PG.connect(dbconfig)
+        @connection.exec "SET client_min_messages TO warning"
+      end
+
+      @connection
     end
 
     def connection_reset

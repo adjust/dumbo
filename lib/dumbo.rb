@@ -1,3 +1,4 @@
+require 'pry'
 require 'pg'
 require 'dumbo/version'
 require 'dumbo/cli'

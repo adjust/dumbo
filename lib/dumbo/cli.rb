@@ -101,7 +101,7 @@ module Dumbo
           reg_check = run("make installcheck")
           unless reg_check
             say_status "ERROR", "make installcheck failed", :red
-            fail Thor::Error,'' unless reg_check
+            fail Thor::Error,''
           end
         end
       else
@@ -112,6 +112,7 @@ module Dumbo
     desc 'install', 'install extension'
     method_option :sudo, type: :boolean, default: false, desc: 'use sudo to install extension'
     def install
+      invoke 'build'
       suc = false
       if options[:sudo]
         in_root { suc = run('make clean &> /dev/null && make &> /dev/null && sudo make install &> /dev/null') }
@@ -120,7 +121,7 @@ module Dumbo
       end
       unless suc
         say_status "Error", "make failed with error check output", :red
-        fail Thor::Error,''
+        raise Thor::Error,''
       end
     end
 
@@ -141,6 +142,7 @@ module Dumbo
 
     desc 'migrations', 'creates migration files for the last two versions'
     def migrations
+      invoke 'install'
       invoke 'dumbo:db:load_structure'
       in_root do
         old_version, new_version = Extension.versions.last(2).map(&:to_s)
@@ -169,6 +171,11 @@ module Dumbo
 
     def self.source_root
       @_source_root ||= File.expand_path('../templates', __FILE__)
+    end
+
+    # make sure to exit 1 if Thor::Error is raised
+    def self.exit_on_failure?
+      true
     end
   end
 end
