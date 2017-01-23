@@ -4,7 +4,7 @@ module Dumbo
     identfied_by :source_type, :target_type
 
     def load_attributes
-      result = execute <<-SQL
+      result = DB.exec <<-SQL
       SELECT
         format_type(st.oid,NULL) AS source_type,
         format_type(st.oid,NULL) AS argument_type,

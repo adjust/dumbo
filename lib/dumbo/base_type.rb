@@ -43,7 +43,7 @@ module Dumbo
           AND t.oid = #{oid}
       SQL
 
-      result = execute sql
+      result = DB.exec(sql)
       result.first.each do |k, v|
         send("#{k}=", v) rescue nil
       end

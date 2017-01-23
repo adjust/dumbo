@@ -39,7 +39,7 @@ module Dumbo
     end
 
     def load_attributes
-      result = execute <<-SQL
+      result = DB.exec <<-SQL
         SELECT
           p.proname as name,
           pg_catalog.pg_get_function_result(p.oid) as result_type,

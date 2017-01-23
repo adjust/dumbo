@@ -16,7 +16,7 @@ module Dumbo
     identfied_by :name, :leftarg, :rightarg
 
     def load_attributes
-      result = execute <<-SQL
+      result = DB.exec <<-SQL
         SELECT
          op.oprname AS name,
          op.oprkind AS kind,

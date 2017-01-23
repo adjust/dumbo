@@ -4,7 +4,7 @@ module Dumbo
 
     def load_attributes
       super
-      res = execute <<-SQL
+      res = DB.exec <<-SQL
       SELECT
         attname,
         format_type(t.oid,NULL) AS typname

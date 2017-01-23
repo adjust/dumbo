@@ -11,4 +11,4 @@ def db_config
   @config ||= YAML.load_file('config/database.yml')
 end
 
-ActiveRecord::Base.establish_connection db_config[ENV['DUMBO_ENV']]
+Dumbo::DB.connect db_config[ENV['DUMBO_ENV']]

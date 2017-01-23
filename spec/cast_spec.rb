@@ -1,7 +1,7 @@
 require 'spec_helper'
 describe Dumbo::Cast do
   let(:cast) do
-    oid = query("SELECT ca.oid
+    oid = Dumbo::DB.exec("SELECT ca.oid
               FROM pg_cast ca
               JOIN pg_type st ON st.oid=castsource
               JOIN pg_type tt ON tt.oid=casttarget

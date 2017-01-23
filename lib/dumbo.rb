@@ -1,5 +1,5 @@
-require 'active_record'
 require 'dumbo/version'
+require 'dumbo/db'
 require 'dumbo/pg_object'
 require 'dumbo/type'
 require 'dumbo/function'

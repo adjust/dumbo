@@ -5,7 +5,7 @@ module Dumbo
     def load_attributes
       super
 
-      res = execute <<-SQL
+      res = DB.exec <<-SQL
           SELECT enumlabel
           FROM pg_enum
           WHERE enumtypid = #{oid}

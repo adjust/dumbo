@@ -5,7 +5,7 @@ module Dumbo
     identfied_by :name, :input_data_type
 
     def load_attributes
-      result = execute <<-SQL
+      result = DB.exec <<-SQL
         SELECT
         proname AS name,
         pg_get_function_arguments(pr.oid) AS input_data_type,

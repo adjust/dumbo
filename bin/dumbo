@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+
 require 'thor'
 require 'thor/group'
 require 'erubis'
@@ -16,7 +17,7 @@ module Cli
       end
 
       File.open("spec/#{name}_spec.rb", 'w') do |f|
-        f.puts <<-EOF.gsub('          ','')
+        f.puts <<-EOF.gsub('          ', '')
           require 'spec_helper'
 
           describe '#{name}' do

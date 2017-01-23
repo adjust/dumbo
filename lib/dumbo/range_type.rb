@@ -5,7 +5,7 @@ module Dumbo
 
     def load_attributes
       super
-      result = execute <<-SQL
+      result = DB.exec <<-SQL
         SELECT
           st.typname AS subtype,
           opc.opcname AS subtype_opclass,

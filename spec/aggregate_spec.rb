@@ -1,7 +1,8 @@
 require 'spec_helper'
+
 describe Dumbo::Aggregate do
   let(:avg) do
-    oid = query("SELECT p.oid
+    oid = Dumbo::DB.exec("SELECT p.oid
               FROM pg_proc p
               JOIN pg_aggregate ag ON p.oid = ag.aggfnoid
               WHERE proname='avg' AND pg_get_function_arguments(p.oid) = 'integer'").first['oid']
@@ -9,7 +10,7 @@ describe Dumbo::Aggregate do
   end
 
   let(:min) do
-    oid = query("SELECT p.oid
+    oid = Dumbo::DB.exec("SELECT p.oid
               FROM pg_proc p
               JOIN pg_aggregate ag ON p.oid = ag.aggfnoid
               WHERE proname='min' AND pg_get_function_arguments(p.oid) = 'integer'").first['oid']
@@ -24,7 +25,7 @@ describe Dumbo::Aggregate do
         FINALFUNC = int8_avg,
         INITCOND = '{0,0}'
       );
-      SQL
+    SQL
   end
 
   it 'min should have a sql representation' do
@@ -34,7 +35,6 @@ describe Dumbo::Aggregate do
         STYPE = int4,
         SORTOP = "<"
       );
-      SQL
+    SQL
   end
-
 end

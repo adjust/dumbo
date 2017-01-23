@@ -1,10 +1,7 @@
 require 'pathname'
-require 'active_support/core_ext/module/attribute_accessors'
 
 module Dumbo
   class DependencyNotFound < StandardError
-    attr_accessor :dep, :file
-
     def initialize(dep, file)
       super "Can't find dependency #{dep} for file: #{file}"
     end
@@ -89,7 +86,7 @@ module Dumbo
 
     def relative_path(dep, file)
       p = Pathname.new(file).dirname.join(dep)
-      if p.exist? && p.extname.present?
+      if p.exist? && !p.extname.empty?
         return p.to_s
       elsif p.extname.empty?
         %w(.sql .erb .sql.erb).each do |ext|

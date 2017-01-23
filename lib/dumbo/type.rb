@@ -4,7 +4,7 @@ module Dumbo
     identfied_by :name
 
     def load_attributes
-      result = execute("SELECT typname, typtype, typrelid FROM pg_type WHERE oid = #{oid}").first
+      result = DB.exec("SELECT typname, typtype, typrelid FROM pg_type WHERE oid = #{oid}").first
       @name = result['typname']
       @type = result['typtype']
       @typrelid = result['typrelid']

@@ -1,13 +1,9 @@
 require 'yaml'
-module Dumbo
-  class BindingLoader
 
+module Dumbo
+  class BindingLoader < Struct.new(:file)
     def self.load_pattern
       /\s*--\s*load +([^\s'";]+)/
-    end
-
-    def initialize(file)
-      @file = file
     end
 
     def load

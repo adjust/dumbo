@@ -58,18 +58,18 @@ module Dumbo
     end
 
     def create
-      execute "DROP EXTENSION IF EXISTS #{name}"
+      DB.exec "DROP EXTENSION IF EXISTS #{name}"
 
       create_sql = "CREATE EXTENSION #{name}"
       create_sql = "#{create_sql} VERSION '#{version}'" unless version.nil?
 
-      execute create_sql
+      DB.exec create_sql
       self
     end
 
     def obj_id
       @obj_id ||= begin
-        result = execute <<-SQL
+        result = DB.exec <<-SQL
           SELECT e.extname, e.oid
           FROM pg_catalog.pg_extension e
           WHERE e.extname ~ '^(#{name})$'
@@ -81,7 +81,7 @@ module Dumbo
 
     def objects
       @objects ||= begin
-        result = execute <<-SQL
+        result = DB.exec <<-SQL
           SELECT classid::pg_catalog.regclass, objid
           FROM pg_catalog.pg_depend
           WHERE refclassid = 'pg_catalog.pg_extension'::pg_catalog.regclass AND refobjid = '#{obj_id}' AND deptype = 'e'
@@ -110,12 +110,6 @@ module Dumbo
 
     def aggregates
       objects.select { |o| o.kind_of?(Aggregate) }
-    end
-
-    private
-
-    def execute(sql)
-      ActiveRecord::Base.connection.execute sql
     end
   end
 end
