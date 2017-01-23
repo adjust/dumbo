@@ -6,7 +6,7 @@ require File.expand_path('../../config/boot', __FILE__)
 
 Dir.glob('spec/support/**/*.rb').each { |f| require f }
 
-Dumbo::DB.silence_notices
+Dumbo::DB.connection.set_notice_receiver { nil }
 
 RSpec.configure do |config|
   config.fail_fast                                        = false
