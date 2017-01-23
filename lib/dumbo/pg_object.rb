@@ -1,13 +1,43 @@
+require 'singleton'
+
 module Dumbo
+  class PgObjectUnregistered < StandardError
+    def initialize
+      super 'PgObject classes must declare `identified_by` parameters'
+    end
+  end
+
   class PgObject
+    class PgObjectRegistry
+      include ::Singleton
+
+      attr_reader :identifiers
+
+      class << self
+        def identifiers
+          instance.identifiers
+        end
+
+        def identifier(klass)
+          klass.ancestors.each do |ancestor|
+            identifier = instance.identifiers[ancestor]
+
+            return identifier unless identifier.nil?
+          end
+
+          raise PgObjectUndefined
+        end
+      end
+
+      def identifiers
+        @identifiers ||= {}
+      end
+    end
+
     attr_reader :oid
 
-    class << self
-      attr_accessor :identifier
-
-      def identfied_by(*args)
-        self.identifier = args
-      end
+    def self.identfied_by(*args)
+      PgObjectRegistry.identifiers[self] = args
     end
 
     def initialize(oid)
@@ -16,7 +46,7 @@ module Dumbo
     end
 
     def identifier
-      self.class.identifier
+      PgObjectRegistry.identifier(self.class)
     end
 
     def identify

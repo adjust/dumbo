@@ -5,10 +5,9 @@ module ExtensionHelper
         mkdir -p #{spec_root}/dumbo_sample_runtime && \
         cp -a #{spec_root}/dumbo_sample/* #{spec_root}/dumbo_sample_runtime
         cd #{spec_root}/dumbo_sample_runtime && \
-        ls #{spec_root}/dumbo_sample_runtime && \
         make -f #{spec_root}/dumbo_sample_runtime/Makefile && \
         make -f #{spec_root}/dumbo_sample_runtime/Makefile install
-      )
+      ) 1> /dev/null
     CMD
   end
 

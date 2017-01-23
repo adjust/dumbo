@@ -1,6 +1,7 @@
 module Dumbo
   class Type < PgObject
     attr_accessor :name, :type, :typrelid
+
     identfied_by :name
 
     def load_attributes
@@ -13,13 +14,13 @@ module Dumbo
     def get
       case type
       when 'c'
-        CompositeType.new(oid)
+        Types::CompositeType.new(oid)
       when 'b'
-        BaseType.new(oid)
+        Types::BaseType.new(oid)
       when 'r'
-        RangeType.new(oid)
+        Types::RangeType.new(oid)
       when 'e'
-        EnumType.new(oid)
+        Types::EnumType.new(oid)
       end
     end
 

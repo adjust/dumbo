@@ -1,5 +1,7 @@
 require 'spec_helper'
+
 include ExtensionHelper
+
 describe Dumbo::Extension do
   describe 'extension setup' do
     let(:extension) { described_class.new('dumbo_sample', '0.0.3') }
@@ -22,7 +24,7 @@ describe Dumbo::Extension do
     describe 'handling types' do
       let(:names) { %w(elephant_composite elephant_range elephant_enum) }
 
-      let(:classes) { [Dumbo::EnumType, Dumbo::CompositeType, Dumbo::RangeType] }
+      let(:classes) { [Dumbo::Types::EnumType, Dumbo::Types::CompositeType, Dumbo::Types::RangeType] }
 
       subject { extension.types }
 
