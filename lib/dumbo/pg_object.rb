@@ -43,7 +43,7 @@ module Dumbo
     end
 
     def migrate_to(other)
-      fail 'Not the Same Objects!' if other.identify != identify
+      fail 'Not the Same Objects!' unless other.identify == identify
 
       if other.to_sql != to_sql
         <<-SQL.gsub(/^ {8}/, '')
