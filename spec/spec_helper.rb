@@ -1,7 +1,6 @@
 require 'rubygems'
-require 'pry'
 
-ENV['DUMBO_ENV']  ||= 'test'
+ENV['DUMBO_ENV'] ||= 'test'
 require File.expand_path('../../config/boot', __FILE__)
 
 Dir.glob('spec/support/**/*.rb').each { |f| require f }

@@ -3,12 +3,12 @@ module ExtensionHelper
     system <<-CMD
       (
         mkdir -p #{spec_root}/dumbo_sample_runtime && \
-        cp -R #{spec_root}/dumbo_sample/ #{spec_root}/dumbo_sample_runtime
+        cp -a #{spec_root}/dumbo_sample/* #{spec_root}/dumbo_sample_runtime
         cd #{spec_root}/dumbo_sample_runtime && \
-        make clean && \
-        make && \
-        make install
-      ) 1> /dev/null
+        ls #{spec_root}/dumbo_sample_runtime && \
+        make -f #{spec_root}/dumbo_sample_runtime/Makefile && \
+        make -f #{spec_root}/dumbo_sample_runtime/Makefile install
+      )
     CMD
   end
 
@@ -16,8 +16,7 @@ module ExtensionHelper
     system <<-CMD
       (
         cd #{spec_root}/dumbo_sample_runtime && \
-        make clean && \
-        make uninstall && \
+        make -f #{spec_root}/dumbo_sample_runtime/Makefile uninstall && \
         rm -rf #{spec_root}/dumbo_sample_runtime
       ) 1> /dev/null
     CMD
