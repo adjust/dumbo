@@ -32,6 +32,6 @@ describe Dumbo::Operator do
   end
 
   it 'should have drop sql' do
-    expect(operator.drop).to eq 'DROP OPERATOR && (box, box);'
+    expect(operator.drop).to eq 'DROP OPERATOR IF EXISTS && (box, box);'
   end
 end
