@@ -25,5 +25,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'pg',      '~> 0.17'
 
   spec.add_dependency 'thor',    '~> 0.19'
-  spec.add_dependency 'bundler', '~> 1.14'
+  spec.add_dependency 'bundler', '~> 1.13'
 end
