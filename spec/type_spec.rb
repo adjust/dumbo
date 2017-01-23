@@ -31,19 +31,19 @@ describe Dumbo::Type do
     let(:type) { extension.types.select { |t| t.name == type_name }.first }
 
     it 'should have a sql representation' do
-      expect(type.to_sql).to eq <<-SQL.gsub(/^ {4}/, '')
-      CREATE TYPE elephant_base(
-        INPUT=elephant_in,
-        OUTPUT=elephant_out,
-        RECEIVE=-,
-        SEND=-,
-        ANALYZE=-,
-        CATEGORY='U',
-        DEFAULT='',
-        INTERNALLENGTH=-1,
-        ALIGNMENT=int,
-        STORAGE=PLAIN
-      );
+      expect(type.to_sql).to eq_sql <<-SQL
+        CREATE TYPE elephant_base(
+          INPUT=elephant_in,
+          OUTPUT=elephant_out,
+          RECEIVE=-,
+          SEND=-,
+          ANALYZE=-,
+          CATEGORY='U',
+          DEFAULT='',
+          INTERNALLENGTH=-1,
+          ALIGNMENT=int,
+          STORAGE=PLAIN
+        );
       SQL
     end
 
@@ -54,11 +54,11 @@ describe Dumbo::Type do
     let(:type_name) { 'elephant_composite' }
 
     it 'should have a sql representation' do
-      expect(type.to_sql).to eq <<-SQL.gsub(/^ {4}/, '')
-      CREATE TYPE elephant_composite AS (
-        weight integer,
-      name text
-      );
+      expect(type.to_sql).to eq_sql <<-SQL
+        CREATE TYPE elephant_composite AS (
+          weight integer,
+          name text
+        );
       SQL
     end
 
@@ -69,12 +69,12 @@ describe Dumbo::Type do
     let(:type_name) { 'elephant_range' }
 
     it 'should have a sql representation' do
-      expect(type.to_sql).to eq <<-SQL.gsub(/^ {4}/, '')
-      CREATE TYPE elephant_range AS RANGE (
-        SUBTYPE=float8,
-      SUBTYPE_OPCLASS=float8_ops,
-      SUBTYPE_DIFF=float8mi
-      );
+      expect(type.to_sql).to eq_sql <<-SQL
+        CREATE TYPE elephant_range AS RANGE (
+          SUBTYPE=float8,
+          SUBTYPE_OPCLASS=float8_ops,
+          SUBTYPE_DIFF=float8mi
+        );
       SQL
     end
 
@@ -85,12 +85,12 @@ describe Dumbo::Type do
     let(:type_name) { 'elephant_enum' }
 
     it 'should have a sql representation' do
-      expect(type.to_sql).to eq <<-SQL.gsub(/^ {4}/, '')
-      CREATE TYPE elephant_enum AS ENUM (
-        'infant',
-      'child',
-      'adult'
-      );
+      expect(type.to_sql).to eq_sql <<-SQL
+        CREATE TYPE elephant_enum AS ENUM (
+          'infant',
+          'child',
+          'adult'
+        );
       SQL
     end
 

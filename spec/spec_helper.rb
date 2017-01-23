@@ -25,4 +25,12 @@ RSpec.configure do |config|
   end
 end
 
-require 'dumbo/test/regression_helper' if ENV['DUMBO_REGRESSION']
+def squish(str)
+  str.gsub(/\A[[:space:]]+/, '').gsub(/[[:space:]]+\z/, '').gsub(/[[:space:]]+/, ' ')
+end
+
+RSpec::Matchers.define :eq_sql do |expected|
+  match do |actual|
+    squish(actual) == squish(expected)
+  end
+end
