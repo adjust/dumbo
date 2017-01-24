@@ -1,3 +1,5 @@
+sudo: required
+dist: trusty
 language: ruby
 rvm:
   - 2.2
@@ -7,6 +9,12 @@ rvm:
   # - 1.8.7
 services:
   - postgresql
+addons:
+  postgresql: "9.6"
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y postgresql-server-dev-9.6
 before_script:
   - psql -c 'create database dumbo_test;' -U postgres
   - cp config/database.yml.travis config/database.yml
+  - sudo chmod 777 /usr/lib/postgresql/9.6/lib /usr/share/postgresql/9.6/extension
