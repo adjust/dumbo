@@ -1,60 +1,68 @@
-# Dumbo
+[![Build Status](https://travis-ci.org/adjust/dumbo.svg?branch=version-1.0.0)](https://travis-ci.org/adjust/dumbo)
 
-postgres extension with fun
+# Dumbo - the PostgreSQL Extension-Development Framework
 
-![](http://img1.wikia.nocookie.net/__cb20091210033559/disney/images/7/76/Dumbo-HQ.JPG)
+Dumbo has been created to facilitate development of PostgreSQL extensions. This
+tool, together with our [pgbundle project](https://github.com/adjust/pgbundle)
+makes maintaining and developing a bundle of PostgreSQL extension dependencies
+easier.
+
+Dumbo is a framework for an easy PostgreSQL extension development. Some of the
+killer features are improved extension version management, automated
+upgrade/downgrade migrations generations and ERB templating support.
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-    gem 'dumbo'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
+To install Dumbo you can use rubygems' `gem` command from your command line:
 
     $ gem install dumbo
 
-## Getting Started
+This should get you sorted instantly but in special system setup you might to
+use `sudo` for this command to run.
 
-At the command prompt, create a new extension:
+## Usage
 
-  dumbo new myextention
+Dumbo comes with an executable, which would be your main interface to the
+functionality of the framework.
 
-where "myextention" is the extension name.
+### Creating a new extension project
 
-Change directory to myextention to start hacking:
+For new PG extension projects, Dumbo can generate a directory sceleton and
+create the typical files for you.
 
-    cd myapp
+    $ dumbo new-extension my_data_type
 
-As a stating point take a look at the sample function in
+where "my_data_type" is the name for the new PG extension. As a stating point
+take a look at the sample function in `sql/sample.sql` as well as the generated
+`Makefile`.
 
-    sql/sample.sql
+You can already build and install your extension using standard `make install`.
 
-and the corresponding test file
+TODO: illustrate the default generated file/directory tree!
 
-    spec/sample_spec.rb
+### Creating a new version
 
-build the extension and run the specs
+To initialize a new version on an existing extension:
 
-    rake
+    $ dumbo new-version 0.1.2
 
-if you start working on a new version run
+Note that keeping to the (major.minor.patch) versioning is required.
 
-    rake dumbo:new_version [level]
+    $ dumbo migrations
 
-where level is new version level (major, minor patch)
+### Using ERB templates
 
-when you are done you can create the migration files with
+TODO: illustrate this!
 
-    rake dumbo:migrations
+![](http://img1.wikia.nocookie.net/__cb20091210033559/disney/images/7/76/Dumbo-HQ.JPG)
 
 ## Contributing
 
-1. Fork it ( http://github.com/adeven/dumbo/fork )
+Contributions in form of Pull Request, documentation improvement and/or [issue
+reports](https://github.com/adjust/dumbo/issues) are very welcome. To contribute
+code:
+
+1. Fork it (http://github.com/adjust/dumbo/fork)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
