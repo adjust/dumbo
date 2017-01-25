@@ -1,9 +1,10 @@
 require 'rubygems'
 
-ENV['DUMBO_ENV'] ||= 'test'
-require File.expand_path('../../config/boot', __FILE__)
-
+$LOAD_PATH.unshift File.expand_path('../..', __FILE__)
+require 'lib/dumbo'
 Dir.glob('spec/support/**/*.rb').each { |f| require f }
+
+Dumbo.boot('test')
 
 Dumbo::DB.connection.set_notice_receiver { nil }
 

@@ -1,13 +1,13 @@
 require 'pathname'
 
 module Dumbo
-  class DependencyNotFound < StandardError
-    def initialize(dep, file)
-      super "Can't find dependency #{dep} for file: #{file}"
-    end
-  end
-
   class DependencyResolver
+    class NotFound < StandardError
+      def initialize(dep, file)
+        super "Can't find dependency #{dep} for file: #{file}"
+      end
+    end
+
     def self.depends_pattern
       /\s*--\s*require +([^\s'";]+)/
     end
@@ -95,7 +95,7 @@ module Dumbo
         end
       end
 
-      fail DependencyNotFound.new(dep, file)
+      fail DependencyResolver::NotFound.new(dep, file)
     end
   end
 end

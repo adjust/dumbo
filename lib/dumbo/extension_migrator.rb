@@ -1,6 +1,7 @@
 module Dumbo
   class ExtensionMigrator
     attr_reader :old_version, :new_version, :name
+
     TYPES = [:types, :functions, :casts, :operators, :aggregates]
 
     def initialize(name, old_version, new_version)

@@ -17,13 +17,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  # TODO extract rake as development dependency and move the rake tasks
-  # functionality to the bin/dumbo executable
-  spec.add_dependency 'rake',    '~> 10.5'
-
-  spec.add_dependency 'erubis',  '~> 2.7'
-  spec.add_dependency 'pg',      '~> 0.17'
-
-  spec.add_dependency 'thor',    '~> 0.19'
-  spec.add_dependency 'bundler', '~> 1.13'
+  spec.add_dependency 'erubis', '~> 2.7'
+  spec.add_dependency 'pg',     '~> 0.17'
+  spec.add_dependency 'thor',   '~> 0.19'
 end

@@ -1,0 +1,5 @@
+BEGIN;
+CREATE EXTENSION <%= ext_name %>;
+SELECT add_one(1);
+SELECT add_one(2147483647);
+ROLLBACK;

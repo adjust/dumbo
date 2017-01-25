@@ -3,10 +3,16 @@ module Dumbo
     class << self
       def name
         @_name ||= File.read(makefile)[/EXTENSION\s*=\s*([^\s]*)/, 1]
+      rescue SystemCallError => e
+        STDERR.puts("File not found: #{makefile}")
+        raise e
       end
 
       def version
         @_version ||= File.read(control_file)[/default_version\s*=\s*'([^']*)'/, 1]
+      rescue SystemCallError => e
+        STDERR.puts("File not found: #{control_file}")
+        raise e
       end
 
       def versions
