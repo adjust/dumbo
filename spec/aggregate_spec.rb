@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Dumbo::Aggregate do
+describe Dumbo::PgObject::Aggregate do
   let(:avg) do
     sql = <<-SQL
       SELECT p.oid
@@ -9,7 +9,7 @@ describe Dumbo::Aggregate do
       WHERE proname='avg' AND pg_get_function_arguments(p.oid) = 'integer'
     SQL
 
-    Dumbo::Aggregate.new(Dumbo::DB.exec(sql).first['oid'])
+    described_class.new(Dumbo::DB.exec(sql).first['oid'])
   end
 
   let(:min) do
@@ -20,7 +20,7 @@ describe Dumbo::Aggregate do
       WHERE proname='min' AND pg_get_function_arguments(p.oid) = 'integer'
     SQL
 
-    Dumbo::Aggregate.new(Dumbo::DB.exec(sql).first['oid'])
+    described_class.new(Dumbo::DB.exec(sql).first['oid'])
   end
 
   it 'avg should have a sql representation' do

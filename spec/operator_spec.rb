@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Dumbo::Operator do
+describe Dumbo::PgObject::Operator do
   let(:operator) do
     sql = <<-SQL
       SELECT oid FROM pg_operator
@@ -9,7 +9,7 @@ describe Dumbo::Operator do
       AND format_type(oprright, NULL) = 'box'
     SQL
 
-    Dumbo::Operator.new(Dumbo::DB.exec(sql).first['oid']).get
+    described_class.new(Dumbo::DB.exec(sql).first['oid']).get
   end
 
   it 'should have a sql representation' do

@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = Dumbo::VERSION
   spec.authors       = ['Manuel Kniep']
   spec.email         = ['m.kniep@web.de']
-  spec.summary       = %q{postgres extension with fun}
+  spec.summary       = %q{PostgreSQL extensions with fun}
   spec.homepage      = 'https://github.com/adjust/dumbo'
   spec.license       = 'MIT'
 
@@ -18,6 +18,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'erubis', '~> 2.7'
-  spec.add_dependency 'pg',     '~> 0.17'
+  spec.add_dependency 'pg',     '~> 0.19'
   spec.add_dependency 'thor',   '~> 0.19'
+
+  spec.required_ruby_version = '>= 2.0.0'
 end

@@ -23,12 +23,31 @@ To install Dumbo you can use rubygems' `gem` command from your command line:
 This should get you sorted instantly but in special system setup you might to
 use `sudo` for this command to run.
 
+## Configuration
+
+For some of its features Dumbo requires a database connection. For example when
+building migration files between extension versions, Dumbo needs to install
+these two versions on PostgreSQL and compare the respective Postgres objects.
+Database connection settings are expected to be present in `config/database.yml`.
+The expected structure of this file is:
+
+    development:
+      client_encoding: utf8
+      user: postgres
+      password:
+      host: localhost
+      port: 5432
+      dbname: dumbo_test
+
+Note that the keys follow the standard PostgreSQL [connection string
+parameters](https://www.postgresql.org/docs/9.5/static/libpq-connect.html#LIBPQ-CONNSTRING).
+
 ## Usage
 
 Dumbo comes with an executable, which would be your main interface to the
 functionality of the framework.
 
-### Start a new PostgreSQL extension
+### Initialize new PostgreSQL extension
 
 For new PG extension projects, Dumbo can generate a directory skeleton and
 create the typical files for you.
@@ -52,6 +71,7 @@ would generate a project skeleton like this:
 
     pg_currency
     ├── Makefile
+    ├── pg_currency--0.1.0.sql
     ├── README.md
     ├── config
     │   └── database.yml
@@ -82,6 +102,27 @@ generated sample regression testsuite, which you can run using the standard:
 
 from your command line.
 
+### Building the extension
+
+Using Dumbo you'd typically write SQL in files under the `sql` directory and
+optionally C code in the `src` directory. To concatenate the SQL files into the
+required `extname--0.0.1.sql` extension file, Dumbo offers the following command:
+
+    $ dumbo build
+
+`dumbo new` builds this file for you, but for any following version
+you'd need to run `dumbo build` in order to concatinate files in `sql/*.sql`
+together.
+
+Note that if you haven't bumped the extension version in the `extname.control`
+file, subsequent `dumbo build` runs will overwrite the same generated file. This
+comes handy while doing development work.
+
+#### Using ERB templates
+
+Files under `sql/*.sql.erb` and `src/*.{c,h}.erb` support templating using the
+ERB format. If you use that feature I've no idea what will happen....
+
 ### Start a new version
 
 To initialize a new version on an existing extension:
@@ -98,13 +139,20 @@ will update the `*.control` file of the extension to version `0.1.1`.
 
 ### Create migrations between versions
 
-TODO: illustrate this!
+Developing a PostgreSQL extension involves producing and releasing multiple
+versions. To migrate from one version to version PostgreSQL supports the
+mechanism of migration (upgrade & downgrade) files. These are files named like
+`extname--0.0.1--0.0.2.sql` upgrading from version `0.0.1` to `0.0.2` and
+`extname--0.0.2--0.0.1.sql` downgrading the other way.
+
+Maintaining the changes between versions in these files manually is tedious and
+error-prone and Dumbo does it for you automatically.
 
     $ dumbo migrations
 
-### Using ERB templates
-
-TODO: illustrate this!
+Note that Dumbo differentiates between extension versions by looking for files structured
+`extname--major.minor.patch.sql`. Here `extname` is the name of the extension
+and the `major.minor.patch` is the version - e.g. `0.1.1`.
 
 ![](http://img1.wikia.nocookie.net/__cb20091210033559/disney/images/7/76/Dumbo-HQ.JPG)
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Dumbo::Type do
+describe Dumbo::PgObject::Type do
   around(:each) do |example|
     install_testing_extension
     extension.create
@@ -14,7 +14,7 @@ describe Dumbo::Type do
 
   let(:type) do
     oid = Dumbo::DB.exec("SELECT oid FROM pg_type WHERE typname = '#{type_name}'").first['oid']
-    Dumbo::Type.new(oid).get
+    described_class::Base.new(oid).get
   end
 
   shared_examples_for 'identifiable' do

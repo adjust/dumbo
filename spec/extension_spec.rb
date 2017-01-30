@@ -24,7 +24,13 @@ describe Dumbo::Extension do
     describe 'handling types' do
       let(:names) { %w(elephant_composite elephant_range elephant_enum) }
 
-      let(:classes) { [Dumbo::Types::EnumType, Dumbo::Types::CompositeType, Dumbo::Types::RangeType] }
+      let(:classes) do
+        [
+          Dumbo::PgObject::Type::EnumType,
+          Dumbo::PgObject::Type::CompositeType,
+          Dumbo::PgObject::Type::RangeType
+        ]
+      end
 
       subject { extension.types }
 

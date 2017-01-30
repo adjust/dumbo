@@ -3,10 +3,8 @@ dist: trusty
 language: ruby
 rvm:
   - 2.2
-  # - 2.1
-  # - 2.0
-  # - 1.9
-  # - 1.8.7
+  - 2.1
+  - 2.0
 services:
   - postgresql
 addons:

@@ -2,14 +2,8 @@ module Dumbo
   class ExtensionVersion < Struct.new(:major, :minor, :patch)
     include Comparable
 
-    class << self
-      def new_from_string(version)
-        ExtensionVersion.new(*version.split('.').map(&:to_i))
-      end
-
-      def sort
-        sort! { |a, b| a <=> b }
-      end
+    def self.new_from_string(version)
+      ExtensionVersion.new(*version.split('.').map(&:to_i))
     end
 
     def <=>(other)

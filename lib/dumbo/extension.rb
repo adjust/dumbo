@@ -2,14 +2,14 @@ module Dumbo
   class Extension < Struct.new(:name, :version)
     class << self
       def name
-        @_name ||= File.read(makefile)[/EXTENSION\s*=\s*([^\s]*)/, 1]
+        File.read(makefile)[/EXTENSION\s*=\s*([^\s]*)/, 1]
       rescue SystemCallError => e
         STDERR.puts("File not found: #{makefile}")
         raise e
       end
 
       def version
-        @_version ||= File.read(control_file)[/default_version\s*=\s*'([^']*)'/, 1]
+        File.read(control_file)[/default_version\s*=\s*'([^']*)'/, 1]
       rescue SystemCallError => e
         STDERR.puts("File not found: #{control_file}")
         raise e
@@ -21,22 +21,26 @@ module Dumbo
 
       def version!(new_version)
         content = File.read(control_file)
-        new_content = content.gsub(version, new_version)
+        new_content = content.gsub(/\n\s*default_version\s*=.*[\n\Z]/, "\ndefault_version = '#{new_version}'\n")
         File.open(control_file, 'w') { |file| file.puts new_content }
       end
 
       def file_name
-        "#{name}--#{version}.sql"
+        Dumbo.extension_file("#{name}--#{version}.sql")
       end
 
-      private
-
       def makefile
-        'Makefile'
+        Dumbo.extension_file('Makefile')
       end
 
       def control_file
-        "#{name}.control"
+        Dumbo.extension_file("#{name}.control")
+      end
+
+      def make_install
+        return unless File.exists?(makefile)
+
+        Kernel.system('make install > /dev/null')
       end
     end
 
@@ -50,7 +54,7 @@ module Dumbo
 
     # main releases without migrations
     def releases
-      Dir.glob("#{name}--*.sql").reject { |f| f =~ /\d--\d/ }
+      Dumbo.extension_files("#{name}--*.sql").reject { |file| file =~ /\d--\d/ }
     end
 
     def versions
@@ -65,6 +69,8 @@ module Dumbo
 
     def create
       DB.exec "DROP EXTENSION IF EXISTS #{name}"
+
+      Extension.make_install
 
       create_sql = "CREATE EXTENSION #{name}"
       create_sql = "#{create_sql} VERSION '#{version}'" unless version.nil?
@@ -94,28 +100,28 @@ module Dumbo
           ORDER BY 1;
         SQL
 
-        result.map { |r| PgObject.new(r['objid']).get(r['classid']) }
+        result.map { |r| PgObject::Base.new(r['objid']).get(r['classid']) }
       end
     end
 
     def types
-      objects.select { |o| o.kind_of?(Type) }
+      objects.select { |o| o.kind_of?(PgObject::Type::Base) }
     end
 
     def functions
-      objects.select { |o| o.kind_of?(Function) }
+      objects.select { |o| o.kind_of?(PgObject::Function) }
     end
 
     def casts
-      objects.select { |o| o.kind_of?(Cast) }
+      objects.select { |o| o.kind_of?(PgObject::Cast) }
     end
 
     def operators
-      objects.select { |o| o.kind_of?(Operator) }
+      objects.select { |o| o.kind_of?(PgObject::Operator) }
     end
 
     def aggregates
-      objects.select { |o| o.kind_of?(Aggregate) }
+      objects.select { |o| o.kind_of?(PgObject::Aggregate) }
     end
   end
 end

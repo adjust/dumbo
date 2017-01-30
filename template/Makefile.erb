@@ -14,11 +14,5 @@ OBJS = $(patsubst %.c,%.o,$(wildcard src/*.c))
 TESTS   = $(wildcard test/sql/*.sql)
 REGRESS = $(patsubst test/sql/%.sql,%,$(TESTS))
 
-all: concat
-
-concat:
-	echo > $(EXTENSION)--$(EXTVERSION).sql
-	cat $(wildcard sql/*.sql) >> $(EXTENSION)--$(EXTVERSION).sql
-
 REGRESS_OPTS = --inputdir=test --load-language=plpgsql
 include $(PGXS)

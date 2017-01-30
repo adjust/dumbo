@@ -1,6 +1,57 @@
 #!/usr/bin/env ruby
 
-# require 'dumbo'
-require File.join(File.dirname(__FILE__), '..', 'lib', 'dumbo.rb')
+require 'dumbo'
+
+module Dumbo
+  class Cli < Thor
+    desc 'new <name> [initial_version] [extension_comment]', 'Create a new PostgreSQL extension skeleton'
+    def new(name, initial_version = '0.0.1', extension_comment = 'My awesome extension')
+      # TODO validate initial_version if passed
+
+      Dumbo::Command::New.exec(name, initial_version, extension_comment, &print)
+      say("Now building the extension SQL file.")
+      Dir.chdir(name)
+      Dumbo::Command::Build.exec(&print)
+      Dir.chdir('..')
+    end
+
+    desc 'build', 'Concatinate SQL files into the extension\' SQL file in format `extname--1.0.1.sql`'
+    def build
+      Dumbo::Command::Build.exec(&print)
+    end
+
+    desc 'bump [major|minor|patch]', 'Bump the version level on the extension\'s extname.control file'
+    def bump(level = 'patch')
+      level = level.downcase
+
+      error unless ['major', 'minor', 'patch'].include?(level)
+
+      Dumbo::Command::Bump.exec(level, &print)
+
+      say("Updated #{Extension.control_file} to version #{Extension.version}")
+    end
+
+    desc 'migrations', 'Compare the last two versions of the extension and build migration files'
+    def migrations
+      if !Dumbo.boot('development')
+        return
+      end
+
+      Dumbo::Command::Migrations.exec(&print)
+    end
+
+    no_commands do
+      def print
+        Proc.new do |status, path, colour|
+          if colour.nil?
+            say_status(status, path)
+          else
+            say_status(status, path, colour)
+          end
+        end
+      end
+    end
+  end
+end
 
 Dumbo::Cli.start(ARGV)

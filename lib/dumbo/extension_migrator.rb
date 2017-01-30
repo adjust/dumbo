@@ -2,7 +2,7 @@ module Dumbo
   class ExtensionMigrator
     attr_reader :old_version, :new_version, :name
 
-    TYPES = [:types, :functions, :casts, :operators, :aggregates]
+    PG_OBJECTS = [:types, :functions, :casts, :operators, :aggregates]
 
     def initialize(name, old_version, new_version)
       @name = name
@@ -22,14 +22,14 @@ module Dumbo
     end
 
     def upgrade
-      TYPES.map do |type|
+      PG_OBJECTS.map do |type|
         diff = object_diff(type, :upgrade)
         "----#{type}----\n" + diff unless diff.empty?
       end.compact.join("\n")
     end
 
     def downgrade
-      TYPES.reverse.map do |type|
+      PG_OBJECTS.reverse.map do |type|
         diff = object_diff(type, :downgrade)
         "----#{type}----\n" + diff unless diff.empty?
       end.compact.join("\n")
@@ -43,12 +43,12 @@ module Dumbo
       object_diff(@old_version.casts, @new_version.casts)
     end
 
-    def object_diff(type, dir)
+    def object_diff(type, direction)
       ids = @old_version.public_send(type).map(&:identify) | @new_version.public_send(type).map(&:identify)
       sqls = ids.map do |id|
         new_version_obj = @new_version.public_send(type).find { |n| n.identify == id }
         old_version_obj = @old_version.public_send(type).find { |n| n.identify == id }
-        case dir
+        case direction
         when :upgrade
           migrate(old_version_obj, new_version_obj)
         when :downgrade

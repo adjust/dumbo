@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Dumbo::Cast do
+describe Dumbo::PgObject::Cast do
   let(:cast) do
     sql = <<-SQL
       SELECT ca.oid
@@ -11,7 +11,7 @@ describe Dumbo::Cast do
       AND format_type(tt.oid,tt.typtypmod) = 'integer'
     SQL
 
-    Dumbo::Cast.new(Dumbo::DB.exec(sql).first['oid'])
+    described_class.new(Dumbo::DB.exec(sql).first['oid'])
   end
 
   it 'should have a sql representation' do

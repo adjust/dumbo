@@ -5,8 +5,7 @@ module ExtensionHelper
         mkdir -p #{spec_root}/dumbo_sample_runtime && \
         cp -a #{spec_root}/dumbo_sample/* #{spec_root}/dumbo_sample_runtime
         cd #{spec_root}/dumbo_sample_runtime && \
-        make -f #{spec_root}/dumbo_sample_runtime/Makefile && \
-        make -f #{spec_root}/dumbo_sample_runtime/Makefile install
+        make && make install
       ) 1> /dev/null
     CMD
   end
@@ -20,8 +19,6 @@ module ExtensionHelper
       ) 1> /dev/null
     CMD
   end
-
-  private
 
   def spec_root
     File.join(File.dirname(__FILE__), '..')

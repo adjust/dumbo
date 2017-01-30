@@ -19,7 +19,7 @@ module Dumbo
 
     def load_list
       files = []
-      IO.foreach(@file) do |line|
+      IO.foreach(file) do |line|
         catch(:done) do
           load_file = parse(line)
           files << load_file if load_file
