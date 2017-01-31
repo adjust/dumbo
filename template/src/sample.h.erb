@@ -1,0 +1,10 @@
+#ifndef <%= ext_name.upcase %>_H
+#define <%= ext_name.upcase %>_H
+
+#include "postgres.h"
+#include "fmgr.h"
+#include <limits.h>
+
+Datum add_one(PG_FUNCTION_ARGS);
+
+#endif // <%= ext_name.upcase %>_H

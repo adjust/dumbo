@@ -1,0 +1,11 @@
+BEGIN;
+CREATE EXTENSION <%= ext_name %>;
+SELECT add_one(1);
+ add_one 
+---------
+       2
+(1 row)
+
+SELECT add_one(2147483647);
+ERROR:  Integer overflow
+ROLLBACK;

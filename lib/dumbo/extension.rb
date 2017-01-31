@@ -2,11 +2,15 @@ module Dumbo
   class Extension < Struct.new(:name, :version)
     class << self
       def name
-        @_name ||= File.read(makefile)[/EXTENSION\s*=\s*([^\s]*)/, 1]
+        return unless File.exists?(makefile)
+
+        File.read(makefile)[/EXTENSION\s*=\s*([^\s]*)/, 1]
       end
 
       def version
-        @_version ||= File.read(control_file)[/default_version\s*=\s*'([^']*)'/, 1]
+        return unless File.exists?(control_file)
+
+        File.read(control_file)[/default_version\s*=\s*'([^']*)'/, 1]
       end
 
       def versions
@@ -15,22 +19,30 @@ module Dumbo
 
       def version!(new_version)
         content = File.read(control_file)
-        new_content = content.gsub(version, new_version)
+        new_content = content.gsub(/\n\s*default_version\s*=.*[\n\Z]/, "\ndefault_version = '#{new_version}'\n")
         File.open(control_file, 'w') { |file| file.puts new_content }
       end
 
       def file_name
-        "#{name}--#{version}.sql"
+        Dumbo.extension_file("#{name}--#{version}.sql")
       end
 
-      private
-
       def makefile
-        'Makefile'
+        Dumbo.extension_file('Makefile')
       end
 
       def control_file
-        "#{name}.control"
+        Dumbo.extension_file("#{name}.control")
+      end
+
+      def config_file
+        Dumbo.extension_file('config', 'database.yml')
+      end
+
+      def make_install
+        return unless File.exists?(makefile)
+
+        Kernel.system('make install > /dev/null')
       end
     end
 
@@ -44,7 +56,7 @@ module Dumbo
 
     # main releases without migrations
     def releases
-      Dir.glob("#{name}--*.sql").reject { |f| f =~ /\d--\d/ }
+      Dumbo.extension_files("#{name}--*.sql").reject { |file| file =~ /\d--\d/ }
     end
 
     def versions
@@ -58,18 +70,20 @@ module Dumbo
     end
 
     def create
-      execute "DROP EXTENSION IF EXISTS #{name}"
+      DB.exec "DROP EXTENSION IF EXISTS #{name}"
+
+      Extension.make_install
 
       create_sql = "CREATE EXTENSION #{name}"
       create_sql = "#{create_sql} VERSION '#{version}'" unless version.nil?
 
-      execute create_sql
+      DB.exec create_sql
       self
     end
 
     def obj_id
       @obj_id ||= begin
-        result = execute <<-SQL
+        result = DB.exec <<-SQL
           SELECT e.extname, e.oid
           FROM pg_catalog.pg_extension e
           WHERE e.extname ~ '^(#{name})$'
@@ -81,41 +95,35 @@ module Dumbo
 
     def objects
       @objects ||= begin
-        result = execute <<-SQL
+        result = DB.exec <<-SQL
           SELECT classid::pg_catalog.regclass, objid
           FROM pg_catalog.pg_depend
           WHERE refclassid = 'pg_catalog.pg_extension'::pg_catalog.regclass AND refobjid = '#{obj_id}' AND deptype = 'e'
           ORDER BY 1;
         SQL
 
-        result.map { |r| PgObject.new(r['objid']).get(r['classid']) }
+        result.map { |r| PgObject::Base.new(r['objid']).get(r['classid']) }
       end
     end
 
     def types
-      objects.select { |o| o.kind_of?(Type) }
+      objects.select { |o| o.kind_of?(PgObject::Type::Base) }
     end
 
     def functions
-      objects.select { |o| o.kind_of?(Function) }
+      objects.select { |o| o.kind_of?(PgObject::Function) }
     end
 
     def casts
-      objects.select { |o| o.kind_of?(Cast) }
+      objects.select { |o| o.kind_of?(PgObject::Cast) }
     end
 
     def operators
-      objects.select { |o| o.kind_of?(Operator) }
+      objects.select { |o| o.kind_of?(PgObject::Operator) }
     end
 
     def aggregates
-      objects.select { |o| o.kind_of?(Aggregate) }
-    end
-
-    private
-
-    def execute(sql)
-      ActiveRecord::Base.connection.execute sql
+      objects.select { |o| o.kind_of?(PgObject::Aggregate) }
     end
   end
 end

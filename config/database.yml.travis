@@ -1,0 +1,7 @@
+test:
+  client_encoding: utf8
+  user: postgres
+  password:
+  host: localhost
+  port: 5432
+  dbname: dumbo_test

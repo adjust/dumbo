@@ -1,13 +1,9 @@
 require 'yaml'
-module Dumbo
-  class BindingLoader
 
+module Dumbo
+  class BindingLoader < Struct.new(:file)
     def self.load_pattern
       /\s*--\s*load +([^\s'";]+)/
-    end
-
-    def initialize(file)
-      @file = file
     end
 
     def load
@@ -23,7 +19,7 @@ module Dumbo
 
     def load_list
       files = []
-      IO.foreach(@file) do |line|
+      IO.foreach(file) do |line|
         catch(:done) do
           load_file = parse(line)
           files << load_file if load_file

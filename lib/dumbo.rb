@@ -1,22 +1,58 @@
-require 'active_record'
-require 'dumbo/version'
-require 'dumbo/pg_object'
-require 'dumbo/type'
-require 'dumbo/function'
-require 'dumbo/cast'
-require 'dumbo/base_type'
-require 'dumbo/aggregate'
-require 'dumbo/composite_type'
-require 'dumbo/dependency_resolver'
-require 'dumbo/enum_type'
-require 'dumbo/extension'
-require 'dumbo/extension_migrator'
-require 'dumbo/extension_version'
-require 'dumbo/operator'
-require 'dumbo/range_type'
-require 'dumbo/version'
-require 'dumbo/binding_loader'
+require 'thor'
+require 'erubis'
+require 'fileutils'
+require 'pathname'
+
+['', 'command', 'pg_object', 'pg_object/type'].each do |submodule|
+  Dir.glob(File.join(File.dirname(__FILE__), 'dumbo', submodule, '*.rb')).each do |path|
+    require File.expand_path(path)
+  end
+end
 
 module Dumbo
-  # Your code goes here...
+  class << self
+    def in_extension_directory?
+      Extension.name && Extension.version
+    end
+
+    def extension_file(*files)
+      File.join(extension_root, *files)
+    end
+
+    def extension_files(*files)
+      Dir.glob(extension_file(*files))
+    end
+
+    def template_root
+      File.join(File.dirname(__FILE__), '..', 'template')
+    end
+
+    def template_files(*files)
+      Dir.glob(File.join(template_root, *files))
+    end
+
+    def init(env)
+      return false if db_config.nil? || db_config[env].nil?
+
+      DB.connect(db_config[env])
+    end
+
+    def db_config
+      return nil unless File.exists?(Extension.config_file)
+
+      @config ||= YAML.load_file(Extension.config_file)
+    end
+
+    # This is meant to enable possible future functionality such as flexible
+    # extension root via environment variable or config.
+    def extension_root
+      FileUtils.pwd
+    end
+
+    def connstring(env)
+      return nil if db_config.nil?
+
+      db_config[env].map { |key, value| "#{key}=#{value}" }.join(' ')
+    end
+  end
 end

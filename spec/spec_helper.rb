@@ -1,14 +1,13 @@
 require 'rubygems'
-require 'dumbo/test'
+require 'pry'
 
-ENV['DUMBO_ENV']  ||= 'test'
-require File.expand_path('../../config/boot', __FILE__)
-
-require 'dumbo/test/silence_unknown_oid'
-
-ActiveRecord::Base.logger.level = 0 if ActiveRecord::Base.logger
-
+$LOAD_PATH.unshift File.expand_path('../..', __FILE__)
+require 'lib/dumbo'
 Dir.glob('spec/support/**/*.rb').each { |f| require f }
+
+Dumbo.init('test')
+
+Dumbo::DB.connection.set_notice_receiver { nil }
 
 RSpec.configure do |config|
   config.fail_fast                                        = false
@@ -21,14 +20,19 @@ RSpec.configure do |config|
 
   # wrap test in transactions
   config.around(:each) do |example|
-    ActiveRecord::Base.transaction do
+    Dumbo::DB.transaction do
       example.run
-      fail ActiveRecord::Rollback
+      fail Dumbo::DB::Rollback
     end
   end
-
-  config.include(Dumbo::Test::Helper)
-  config.include(Dumbo::Matchers)
 end
 
-require 'dumbo/test/regression_helper' if ENV['DUMBO_REGRESSION']
+def squish(str)
+  str.gsub(/\A[[:space:]]+/, '').gsub(/[[:space:]]+\z/, '').gsub(/[[:space:]]+/, ' ')
+end
+
+RSpec::Matchers.define :eq_sql do |expected|
+  match do |actual|
+    squish(actual) == squish(expected)
+  end
+end

@@ -1,7 +1,8 @@
 module Dumbo
   class ExtensionMigrator
     attr_reader :old_version, :new_version, :name
-    TYPES = [:types, :functions, :casts, :operators, :aggregates]
+
+    PG_OBJECTS = [:types, :functions, :casts, :operators, :aggregates]
 
     def initialize(name, old_version, new_version)
       @name = name
@@ -11,26 +12,31 @@ module Dumbo
       @new_version.objects
     end
 
+    def upgrade_migration_filename
+      "#{name}--#{old_version.version}--#{new_version.version}.sql"
+    end
+
+    def downgrade_migration_filename
+      "#{name}--#{new_version.version}--#{old_version.version}.sql"
+    end
+
     def create
-      File.open("#{name}--#{old_version.version}--#{new_version.version}.sql", 'w') do |f|
-        f.puts upgrade
-      end
-      File.open("#{name}--#{new_version.version}--#{old_version.version}.sql", 'w') do |f|
-        f.puts downgrade
-      end
+      File.open(upgrade_migration_filename, 'w') { |f| f.puts upgrade }
+
+      File.open(downgrade_migration_filename, 'w') { |f| f.puts downgrade }
     end
 
     def upgrade
-      TYPES.map do |type|
+      PG_OBJECTS.map do |type|
         diff = object_diff(type, :upgrade)
-        "----#{type}----\n" + diff if diff.present?
+        "----#{type}----\n" + diff unless diff.empty?
       end.compact.join("\n")
     end
 
     def downgrade
-      TYPES.reverse.map do |type|
+      PG_OBJECTS.reverse.map do |type|
         diff = object_diff(type, :downgrade)
-        "----#{type}----\n" + diff if diff.present?
+        "----#{type}----\n" + diff unless diff.empty?
       end.compact.join("\n")
     end
 
@@ -42,12 +48,12 @@ module Dumbo
       object_diff(@old_version.casts, @new_version.casts)
     end
 
-    def object_diff(type, dir)
+    def object_diff(type, direction)
       ids = @old_version.public_send(type).map(&:identify) | @new_version.public_send(type).map(&:identify)
       sqls = ids.map do |id|
         new_version_obj = @new_version.public_send(type).find { |n| n.identify == id }
         old_version_obj = @old_version.public_send(type).find { |n| n.identify == id }
-        case dir
+        case direction
         when :upgrade
           migrate(old_version_obj, new_version_obj)
         when :downgrade
@@ -66,11 +72,6 @@ module Dumbo
       elsif to
         to.to_sql
       end
-    end
-
-    private
-    def execute(sql)
-      ActiveRecord::Base.connection.execute sql
     end
   end
 end
