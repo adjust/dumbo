@@ -5,7 +5,9 @@ module Dumbo
         file_list = DependencyResolver.new(Dumbo.extension_files('sql', '**', '*.{sql,erb}')).resolve
 
         lines = file_list.map do |file|
-          ["--source file #{file}"] + get_sql(file) + [' ']
+          relative_path = Pathname.new(file).relative_path_from(Pathname.new(Dumbo.extension_root))
+
+          ["--source file #{relative_path}"] + get_sql(file) + [' ']
         end
 
         concatenate(lines, Extension.file_name, &block)

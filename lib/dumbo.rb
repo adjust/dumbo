@@ -48,14 +48,16 @@ module Dumbo
       @config ||= YAML.load_file(File.join('config', 'database.yml'))
     end
 
+    # This is meant to enable possible future functionality such as flexible
+    # extension root via environment variable or config.
+    def extension_root
+      FileUtils.pwd
+    end
+
     private
 
     def connstring(env)
       db_config[env].map { |key, value| "#{key}=#{value}" }.join(' ')
-    end
-
-    def extension_root
-      FileUtils.pwd
     end
   end
 end
