@@ -2,9 +2,10 @@
 # against. These configuration settings follow the Parameter Key Words from
 # here: https://www.postgresql.org/docs/current/static/libpq-connect.html
 #
-test:
+development:
   client_encoding: utf8
-  username: postgres
+  user: postgres
   password:
   host: localhost
-  dbname: <%= ext_name %>_test
+  dbname: <%= ext_name %>_development
+  port: 5432

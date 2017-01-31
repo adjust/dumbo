@@ -6,10 +6,10 @@ module Dumbo
   class Cli < Thor
     desc 'new <name> [initial_version] [extension_comment]', 'Create a new PostgreSQL extension skeleton'
     def new(name, initial_version = '0.0.1', extension_comment = 'My awesome extension')
-      # TODO validate initial_version if passed
-
+      say('Copying the extension scuffold.')
       Dumbo::Command::New.exec(name, initial_version, extension_comment, &print)
-      say("Now building the extension SQL file.")
+      say('Done.')
+      say('Now building the extension SQL file.')
       Dir.chdir(name)
       Dumbo::Command::Build.exec(&print)
       Dir.chdir('..')
@@ -17,14 +17,20 @@ module Dumbo
 
     desc 'build', 'Concatinate SQL files into the extension\' SQL file in format `extname--1.0.1.sql`'
     def build
+      ensure_in_extension_directory!
+
       Dumbo::Command::Build.exec(&print)
     end
 
     desc 'bump [major|minor|patch]', 'Bump the version level on the extension\'s extname.control file'
     def bump(level = 'patch')
+      ensure_in_extension_directory!
+
       level = level.downcase
 
-      error unless ['major', 'minor', 'patch'].include?(level)
+      unless ['major', 'minor', 'patch'].include?(level)
+        $stderr.puts 'Bump argument must be major, minor or patch.'
+      end
 
       Dumbo::Command::Bump.exec(level, &print)
 
@@ -33,22 +39,58 @@ module Dumbo
 
     desc 'migrations', 'Compare the last two versions of the extension and build migration files'
     def migrations
-      if !Dumbo.boot('development')
-        return
-      end
+      ensure_in_extension_directory!
+      ensure_db_connection!
 
       Dumbo::Command::Migrations.exec(&print)
     end
 
     no_commands do
       def print
-        Proc.new do |status, path, colour|
-          if colour.nil?
-            say_status(status, path)
+        Proc.new do |status, text, colour|
+          if status.to_s == 'error'
+            $stderr.puts text
           else
-            say_status(status, path, colour)
+            if colour.nil?
+              say_status(status, text)
+            else
+              say_status(status, text, colour)
+            end
           end
         end
+      end
+
+      def ensure_in_extension_directory!
+        return if Dumbo.in_extension_directory?
+
+        $stderr.puts <<-MSG.gsub(/^\s*/, '')
+          The files 'Makefile' and 'extname.control' are expected to be found in a
+          PostgreSQL extension directory. Check Dumbo's documentation or run
+          `dumbo new` to generate a new extension scaffold.
+        MSG
+
+        Kernel.exit 1
+      end
+
+      def ensure_db_connection!
+        return if Dumbo.init('development')
+
+        $stderr.puts <<-MSG.gsub(/^ */, '')
+          Error connecting to PostgreSQL using connection string: `#{Dumbo.connstring('development')}`. The file config/database.yml
+          must provide the required PostgreSQL connection settings in the expected format:
+
+          \tdevelopment:
+          \t  client_encoding: utf8
+          \t  user: postgres
+          \t  password:
+          \t  host: localhost
+          \t  dbname: extension_test_db
+          \t  port: 5432
+
+          For more options see https://www.postgresql.org/docs/current/static/libpq-connect.html
+        MSG
+
+        Kernel.exit 1
       end
     end
   end

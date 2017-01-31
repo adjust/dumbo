@@ -4,19 +4,17 @@ require 'fileutils'
 require 'pathname'
 
 ['', 'command', 'pg_object', 'pg_object/type'].each do |submodule|
-  Dir.glob("#{File.dirname(__FILE__)}/dumbo/#{submodule}/*.rb").each do |path|
+  Dir.glob(File.join(File.dirname(__FILE__), 'dumbo', submodule, '*.rb')).each do |path|
     require File.expand_path(path)
   end
 end
 
 module Dumbo
-  class NoConfigurationError < StandardError
-    def initialize(env)
-      super "Config for environment #{env} not found"
-    end
-  end
-
   class << self
+    def in_extension_directory?
+      Extension.name && Extension.version
+    end
+
     def extension_file(*files)
       File.join(extension_root, *files)
     end
@@ -33,19 +31,16 @@ module Dumbo
       Dir.glob(File.join(template_root, *files))
     end
 
-    def boot(env)
-      raise NoConfigurationError.new(env) if db_config[env].nil?
+    def init(env)
+      return false if db_config.nil? || db_config[env].nil?
 
-      if !DB.connect(db_config[env])
-        $stderr.puts("Error connecting to PostgreSQL using connection string: `#{connstring(env)}`.")
-        return false
-      end
-
-      true
+      DB.connect(db_config[env])
     end
 
     def db_config
-      @config ||= YAML.load_file(File.join('config', 'database.yml'))
+      return nil unless File.exists?(Extension.config_file)
+
+      @config ||= YAML.load_file(Extension.config_file)
     end
 
     # This is meant to enable possible future functionality such as flexible
@@ -54,9 +49,9 @@ module Dumbo
       FileUtils.pwd
     end
 
-    private
-
     def connstring(env)
+      return nil if db_config.nil?
+
       db_config[env].map { |key, value| "#{key}=#{value}" }.join(' ')
     end
   end

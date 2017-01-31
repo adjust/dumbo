@@ -2,17 +2,15 @@ module Dumbo
   class Extension < Struct.new(:name, :version)
     class << self
       def name
+        return unless File.exists?(makefile)
+
         File.read(makefile)[/EXTENSION\s*=\s*([^\s]*)/, 1]
-      rescue SystemCallError => e
-        STDERR.puts("File not found: #{makefile}")
-        raise e
       end
 
       def version
+        return unless File.exists?(control_file)
+
         File.read(control_file)[/default_version\s*=\s*'([^']*)'/, 1]
-      rescue SystemCallError => e
-        STDERR.puts("File not found: #{control_file}")
-        raise e
       end
 
       def versions
@@ -35,6 +33,10 @@ module Dumbo
 
       def control_file
         Dumbo.extension_file("#{name}.control")
+      end
+
+      def config_file
+        Dumbo.extension_file('config', 'database.yml')
       end
 
       def make_install

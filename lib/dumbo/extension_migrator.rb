@@ -12,13 +12,18 @@ module Dumbo
       @new_version.objects
     end
 
+    def upgrade_migration_filename
+      "#{name}--#{old_version.version}--#{new_version.version}.sql"
+    end
+
+    def downgrade_migration_filename
+      "#{name}--#{new_version.version}--#{old_version.version}.sql"
+    end
+
     def create
-      File.open("#{name}--#{old_version.version}--#{new_version.version}.sql", 'w') do |f|
-        f.puts upgrade
-      end
-      File.open("#{name}--#{new_version.version}--#{old_version.version}.sql", 'w') do |f|
-        f.puts downgrade
-      end
+      File.open(upgrade_migration_filename, 'w') { |f| f.puts upgrade }
+
+      File.open(downgrade_migration_filename, 'w') { |f| f.puts downgrade }
     end
 
     def upgrade
