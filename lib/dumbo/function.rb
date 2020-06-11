@@ -45,12 +45,16 @@ module Dumbo
           pg_catalog.pg_get_function_result(p.oid) as result_type,
           pg_catalog.pg_get_function_arguments(p.oid) as args,
           pg_catalog.pg_get_function_identity_arguments(p.oid) as arg_types,
-          CASE
-            WHEN p.proisagg THEN 'agg'
-            WHEN p.proiswindow THEN 'window'
-            WHEN p.prorettype = 'pg_catalog.trigger'::pg_catalog.regtype THEN 'trigger'
-            ELSE 'normal'
-          END as "type",
+           CASE p.prokind
+              WHEN 'a' THEN 'agg'
+              WHEN 'w' THEN 'window'
+              WHEN 'p' THEN 'proc'
+              ELSE 
+                CASE WHEN p.prorettype = 'pg_catalog.trigger'::pg_catalog.regtype 
+                  THEN 'trigger' 
+                  ELSE 'normal' 
+                END
+           END as "type",
           CASE
             WHEN p.provolatile = 'i' THEN 'immutable'
             WHEN p.provolatile = 's' THEN 'stable'
@@ -60,7 +64,7 @@ module Dumbo
           l.lanname as language,
           p.prosrc as "source",
           pg_catalog.obj_description(p.oid, 'pg_proc') as description,
-          CASE WHEN p.proisagg THEN 'agg_dummy' ELSE pg_get_functiondef(p.oid) END as definition
+          CASE WHEN  p.prokind = 'a' THEN 'agg_dummy' ELSE pg_get_functiondef(p.oid) END as definition
 
         FROM pg_catalog.pg_proc p
         LEFT JOIN pg_catalog.pg_language l ON l.oid = p.prolang

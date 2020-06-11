@@ -30,7 +30,7 @@ module Dumbo
     end
 
     def flat_expected(expected)
-      expected = stringify_array(expected)
+      #expected = stringify_array(expected)
       expected.size == 1 ? expected.first : expected
     end
 

@@ -12,7 +12,7 @@ describe Dumbo::Extension do
     end
 
     it 'should return extension obj_id' do
-      expect(extension.obj_id).to match /\d+/
+      expect(extension.obj_id).to be_kind_of(Integer)
     end
 
     it 'should return a list of objects' do
