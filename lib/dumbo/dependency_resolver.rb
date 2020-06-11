@@ -22,7 +22,8 @@ module Dumbo
     end
 
     def resolve
-      list = dependency_list.sort { |a, b| a.last.size <=> b.last.size }
+      # sort by dependency size and name
+      list = dependency_list.sort_by {|a| [ a.last.size, a.first ]} 
       resolve_list(list)
     end
 
