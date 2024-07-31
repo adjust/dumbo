@@ -35,7 +35,7 @@ module Dumbo
         desc 'load db structure from db/structure.sql or DB_STRUCTURE environment variable'
         task load_structure: :environment do
             filename = ENV['DB_STRUCTURE'] || File.join('db', 'structure.sql')
-            if File.exists?(filename)
+            if File.exist?(filename)
               ActiveRecord::Tasks::DatabaseTasks.structure_load(@config, filename)
             else
               puts "File not found skip"
